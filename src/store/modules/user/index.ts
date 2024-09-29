@@ -68,6 +68,19 @@ const useUserStore = defineStore('user', {
         throw err;
       }
     },
+
+    // OAuth2 login
+    async oauth2Login() {
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get('access_token');
+      if (token) {
+        setToken(token);
+        return true;
+      }
+      return false;
+    },
+
+    // Logout
     logoutCallBack() {
       const appStore = useAppStore();
       this.resetInfo();
@@ -76,7 +89,6 @@ const useUserStore = defineStore('user', {
       appStore.clearServerMenu();
     },
 
-    // Logout
     async logout() {
       try {
         await userLogout();

@@ -1,5 +1,5 @@
 export default {
-  'menu.system.sysMenu': '菜单管理',
+  'menu.admin.sysMenu': '菜单管理',
   // form
   'admin.menu.form.name': '菜单名称',
   'admin.menu.form.name.placeholder': '请输入菜单名称',
@@ -13,8 +13,7 @@ export default {
   'admin.menu.form.title.placeholder': '请输入标题',
   'admin.menu.form.title.help': '菜单标题是必填项',
   'admin.menu.form.path.name': '请输入路由名称',
-  'admin.menu.form.name.help':
-    '菜单名称要与路由配置里meta.locale后缀一致，如路由`menu.system`, 则这里应命名为system',
+  'admin.menu.form.name.help': '路由名称要与路由配置里的 `name` 字段保持一致',
   'admin.menu.form.path.placeholder': '请输入路由路径',
   'admin.menu.form.component.placeholder': '请输入组件路径',
   'admin.menu.form.perms.placeholder': '请输入权限字符',
@@ -55,4 +54,5 @@ export default {
   'admin.menu.columns.edit.drawer': '编辑菜单',
   'admin.menu.columns.delete': '删除',
   'admin.menu.columns.delete.drawer': '删除菜单',
+  'admin.menu.columns.view': '查看',
 };

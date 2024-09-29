@@ -55,5 +55,7 @@ export function createCasbinGroups(data: CasbinGroupsReq) {
 }
 
 export function deleteCasbinAllGroups(data: CasbinGroupDel) {
-  return axios.delete('/api/v1/sys/casbin/groups/all', { data });
+  return axios.delete('/api/v1/sys/casbin/groups/all', {
+    params: data,
+  });
 }

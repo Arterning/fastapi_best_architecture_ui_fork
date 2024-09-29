@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <a-layout style="padding: 0 18px">
-      <Breadcrumb :items="[$t('menu.system'), $t('menu.system.sysMenu')]" />
-      <a-card :title="$t('menu.system.sysMenu')" class="general-card">
+      <Breadcrumb :items="[$t('menu.admin'), $t('menu.admin.sysMenu')]" />
+      <a-card :title="$t('menu.admin.sysMenu')" class="general-card">
         <a-row>
           <a-col :span="12">
             <a-form
@@ -463,7 +463,8 @@
       title: t('admin.menu.columns.operate'),
       dataIndex: 'operate',
       slotName: 'operate',
-      width: 166,
+      align: 'center',
+      width: 188,
     },
   ]);
 

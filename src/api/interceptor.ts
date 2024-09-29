@@ -14,37 +14,45 @@ export interface HttpError {
   code: number;
 }
 
-if (import.meta.env.VITE_API_BASE_URL) {
-  axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL;
-}
+// 设置全局 baseURL 和 withCredentials
+axios.defaults.baseURL = import.meta.env.VITE_API_BASE_URL || '';
+axios.defaults.withCredentials = true;
 
+// 封装错误提示逻辑
+const showError = (message: string) => {
+  Message.error({
+    content: message,
+    duration: 5000, // 5秒
+  });
+};
+
+// 请求拦截器
 axios.interceptors.request.use(
   (config: AxiosRequestConfig) => {
-    // let each request carry token
-    // this example using the JWT token
-    // Authorization is a custom headers key
-    // please modify it according to the actual situation
     const token = getToken();
     if (token) {
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      config.headers!.Authorization = `Bearer ${token}`;
+      config.headers = {
+        ...config.headers,
+        Authorization: `Bearer ${token}`,
+      };
     }
     return config;
   },
-  (error) => {
-    // do something
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// add response interceptors
+// 响应拦截器
 axios.interceptors.response.use(
-  (response: AxiosResponse<HttpResponse>) => {
-    const { code }: { code: number } = response.data;
-    const { data }: { data: HttpResponse } = response.data;
+  (response: AxiosResponse) => {
+    // 直接返回 Blob 类型的响应
+    if (response.config.responseType === 'blob') {
+      return response;
+    }
+
+    const { code, data }: HttpResponse = response.data;
 
     if (code === 401) {
-      // TODO: token 监听，自动刷新，重新登录
+      // TODO: 处理 token 过期，自动刷新 token 或跳转登录界面
     }
 
     return data;
@@ -67,10 +75,7 @@ axios.interceptors.response.use(
       res.msg = '请求超时，请稍后重试';
     }
 
-    Message.error({
-      content: res.msg,
-      duration: 5 * 1000,
-    });
+    showError(res.msg);
 
     return Promise.reject(res);
   }

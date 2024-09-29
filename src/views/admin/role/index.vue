@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <a-layout style="padding: 0 18px">
-      <Breadcrumb :items="[$t('menu.system'), $t('menu.system.sysRole')]" />
-      <a-card :title="$t('menu.system.sysRole')" class="general-card">
+      <Breadcrumb :items="[$t('menu.admin'), $t('menu.admin.sysRole')]" />
+      <a-card :title="$t('menu.admin.sysRole')" class="general-card">
         <a-row>
           <a-col :span="12">
             <a-form
@@ -224,15 +224,16 @@
                     :style="{ width: '360px' }"
                   />
                 </a-space>
-                <a-tree
-                  ref="menuTreeDataRef"
-                  v-model:checked-keys="menuCheckedKeys"
-                  :check-strictly="true"
-                  :checkable="true"
-                  :data="filterMenuTreeData"
-                  :field-names="selectMenuTreeFieldNames"
-                  style="margin-left: 20px"
-                ></a-tree>
+                <a-scrollbar style="height: 690px; overflow: auto">
+                  <a-tree
+                    ref="menuTreeDataRef"
+                    v-model:checked-keys="menuCheckedKeys"
+                    :checkable="true"
+                    :data="filterMenuTreeData"
+                    :field-names="selectMenuTreeFieldNames"
+                    style="margin-left: 20px"
+                  ></a-tree>
+                </a-scrollbar>
               </a-tab-pane>
               <a-tab-pane
                 key="api"
@@ -253,15 +254,16 @@
                     :style="{ width: '360px' }"
                   />
                 </a-space>
-                <a-tree
-                  ref="apiDataRef"
-                  v-model:checked-keys="apiCheckedKeys"
-                  :check-strictly="true"
-                  :checkable="true"
-                  :data="filterApiData"
-                  :field-names="selectApiFieldNames"
-                  style="margin-left: 10px"
-                ></a-tree>
+                <a-scrollbar style="height: 690px; overflow: auto">
+                  <a-tree
+                    ref="apiDataRef"
+                    v-model:checked-keys="apiCheckedKeys"
+                    :checkable="true"
+                    :data="filterApiData"
+                    :field-names="selectApiFieldNames"
+                    style="margin-left: 10px"
+                  ></a-tree>
+                </a-scrollbar>
               </a-tab-pane>
             </a-tabs>
           </a-drawer>
@@ -623,10 +625,10 @@
     try {
       if (menuCheckedKeys.value.length > 0) {
         checkedParentNode(menuTreeDataRef.value.getCheckedNodes('all'));
-        await updateSysRoleMenu(operateRow.value, {
-          menus: menuCheckedKeys.value,
-        });
       }
+      await updateSysRoleMenu(operateRow.value, {
+        menus: menuCheckedKeys.value,
+      });
       cancelReq();
       Message.success(t('submit.update.success'));
     } catch (error) {
