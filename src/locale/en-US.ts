@@ -8,6 +8,7 @@ import localeSysDept from '@/views/admin/dept/locale/en-US';
 import localeServerMonitor from '@/views/monitor/server/locale/en-US';
 import localeRedisMonitor from '@/views/monitor/redis/locale/en-US';
 import localeSysApi from '@/views/admin/api/locale/en-US';
+import localSysDoc from '@/views/data/doc/locale/en-US';
 import localeSysUser from '@/views/admin/user/locale/en-US';
 import localeSysRole from '@/views/admin/role/locale/en-US';
 import localeGenerator from '@/views/automation/code-generator/local/en-US';
@@ -47,4 +48,5 @@ export default {
   ...localeSysUser,
   ...localeSysRole,
   ...localeGenerator,
+  ...localSysDoc,
 };
