@@ -25,6 +25,18 @@ const DASHBOARD: AppRouteRecordRaw = {
         hideInMenu: false,
       },
     },
+    {
+        path: 'upload',
+        name: 'Upload',
+        component: () => import('@/views/data/upload/index.vue'),
+        meta: {
+          locale: 'menu.data.upload',
+          requiresAuth: true,
+          roles: ['*'],
+          hideInMenu: false,
+          icon: 'IconUpload',
+        },
+      },
   ],
 };
 

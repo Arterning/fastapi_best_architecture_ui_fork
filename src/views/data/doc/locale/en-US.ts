@@ -1,6 +1,7 @@
 export default {
   'menu.data': 'Data',
   'menu.data.doc': 'Doc Manage',
+  'menu.data.upload': 'Doc Upload',
   // form
   'data.doc.form.title': 'Doc title',
   'data.doc.form.name': 'Doc name',

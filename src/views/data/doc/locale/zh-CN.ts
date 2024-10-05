@@ -1,6 +1,7 @@
 export default {
   'menu.data': '数据',
   'menu.data.doc': '文件管理',
+  'menu.data.upload': '文件上传',
   // form
   'data.doc.form.title': '文件标题',
   'data.doc.form.name': '文件名称',
