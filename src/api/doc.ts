@@ -4,6 +4,7 @@ import qs from 'query-string';
 export interface SysDocReq {
   name: string;
   title?: string;
+  desc?: string;
   content?: string;
   type?: string;
 }
@@ -13,7 +14,7 @@ export interface SysDocRes extends SysDocReq {
 }
 
 export interface SysDocParams {
-  name: string;
+  name?: string;
   title?: string;
   content?: string;
   type?: string;
