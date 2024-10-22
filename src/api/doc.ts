@@ -7,6 +7,7 @@ export interface SysDocReq {
   desc?: string;
   content?: string;
   type?: string;
+  file?: string;
 }
 
 export interface SysDocRes extends SysDocReq {

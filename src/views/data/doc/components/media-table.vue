@@ -63,7 +63,8 @@
             
             <a-table
               v-model:selected-keys="rowSelectKeys"
-              :bordered="false"
+              :bordered="{cell:true}"
+              column-resizable
               :columns="columns"
               :data="renderData"
               :loading="loading"
@@ -81,6 +82,9 @@
                 <a-space>
                   <a-link @click="EditApi(record.id)">
                     {{ $t(`data.doc.columns.edit`) }}
+                  </a-link>
+                  <a-link @click="ViewApi(record.id)">
+                    {{ $t(`查看`) }}
                   </a-link>
                 </a-space>
               </template>
@@ -158,6 +162,16 @@
                 {{ $t('modal.title.tips.delete') }}
               </a-space>
             </a-modal>
+            <a-modal
+              :closable="false"
+              :title="`${$t('内容')}`"
+              :visible="openView"
+              :width="650"
+              @cancel="cancelReq"
+              @ok="cancelReq"
+            >
+              <DocDetail :title="form.title" :content="form.content" :file="form.file"/>
+            </a-modal>
           </div>
         </a-card>
       </a-layout>
@@ -188,6 +202,7 @@
       updateSysDoc,
     } from '@/api/doc';
     import { Pagination } from '@/types/global';
+    import DocDetail from '@/views/data/doc/components/doc-detail.vue'
   
     const { t } = useI18n();
     const { loading, setLoading } = useLoading(true);
@@ -232,6 +247,12 @@
       await fetchApiDetail(pk);
       openNewOrEdit.value = true;
     };
+    const ViewApi = async (pk: number) => {
+      operateRow.value = pk;
+      drawerTitle.value = t('查看');
+      await fetchApiDetail(pk);
+      openView.value = true;
+    };
     const DeleteApi = () => {
       drawerTitle.value = t('data.doc.columns.delete.drawer');
       openDelete.value = true;
@@ -261,16 +282,19 @@
     // 对话框
     const openNewOrEdit = ref<boolean>(false);
     const openDelete = ref<boolean>(false);
+    const openView = ref<boolean>(false);
     const drawerTitle = ref<string>('');
     const cancelReq = () => {
       openNewOrEdit.value = false;
       openDelete.value = false;
+      openView.value = false;
     };
     const formDefaultValues: SysDocReq = {
       name: '',
       title: '',
       type: '',
       desc: '',
+      file: undefined,
       content: undefined,
     };
     const form = reactive<SysDocReq>({ ...formDefaultValues });
