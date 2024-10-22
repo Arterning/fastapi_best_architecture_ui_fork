@@ -32,10 +32,14 @@ const props = defineProps({
         default: '',
     },
 });
-const BASE = `${import.meta.env.VITE_API_BASE_URL}/`;
 
 const handleView = (file: string) => {
-    const url = `${BASE}${props.file}`
+    let url;
+    if (import.meta.env.VITE_API_BASE_URL) {
+        url = `${import.meta.env.VITE_API_BASE_URL}/${file}`;
+    } else {
+        url = `${window.origin}/${file}`;
+    }
     window.open(url)
 }
 </script>
