@@ -1,17 +1,17 @@
 <template>
     <a-space direction="vertical">
         <a-descriptions :column="1">
-            <a-description-item label="标题">
+            <a-descriptions-item label="标题">
                 {{ title }}
-            </a-description-item>
-            <a-description-item label="内容">
+            </a-descriptions-item>
+            <a-descriptions-item label="内容">
                 <pre>
-                {{ content }}
-            </pre>
-            </a-description-item>
-            <a-description-item label="原始文件">
+                    {{ content }}
+                </pre>
+            </a-descriptions-item>
+            <a-descriptions-item label="原始文件">
                 <a-link @click="handleView(file)">查看</a-link>
-            </a-description-item>
+            </a-descriptions-item>
         </a-descriptions>
     </a-space>
 </template>
