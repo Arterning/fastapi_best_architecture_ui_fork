@@ -82,6 +82,7 @@
       };
       const formData = new FormData();
       formData.append('file', fileItem.file as Blob);
+      formData.append('title', "23");
       const token = getToken();
       let url = '/api/v1/sys/upload';
       if (import.meta.env.VITE_API_BASE_URL) {

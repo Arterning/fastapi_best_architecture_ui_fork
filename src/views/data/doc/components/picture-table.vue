@@ -86,6 +86,9 @@
                   <a-link @click="ViewApi(record.id)">
                     {{ $t(`查看`) }}
                   </a-link>
+                  <a-link @click="HideApi(record.id)">
+                    {{ $t(`隐藏`) }}
+                  </a-link>
                 </a-space>
               </template>
             </a-table>
@@ -257,6 +260,11 @@
       drawerTitle.value = t('data.doc.columns.delete.drawer');
       openDelete.value = true;
     };
+    const HideApi = (pk: number) => {
+      renderData.value = renderData.value.filter((item) => {
+        return item.id !== pk
+      })
+    };
     const columns = computed<TableColumnData[]>(() => [
       {
         title: 'ID',
@@ -264,18 +272,21 @@
         slotName: 'index',
         ellipsis: true,
         tooltip: true,
-        width: 100,
+        width: 50,
       },
       {
         title: t('data.doc.columns.name'),
         dataIndex: 'name',
         slotName: 'name',
+        width: 500,
+        ellipsis: true,
       },
       {
         title: t('data.doc.columns.operate'),
         dataIndex: 'operate',
         slotName: 'operate',
         align: 'center',
+        width: 150,
       },
     ]);
   
