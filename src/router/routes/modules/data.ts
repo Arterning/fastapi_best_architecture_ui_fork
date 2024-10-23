@@ -26,6 +26,17 @@ const DASHBOARD: AppRouteRecordRaw = {
       },
     },
     {
+      path: 'doc-detail/:id',
+      name: 'DocDetail',
+      component: () => import('@/views/data/doc-detail/index.vue'),
+      meta: {
+        locale: 'menu.data.doc.detail',
+        requiresAuth: true,
+        roles: ['*'],
+        hideInMenu: true,
+      },
+    },
+    {
         path: 'upload',
         name: 'Upload',
         component: () => import('@/views/data/upload/index.vue'),
