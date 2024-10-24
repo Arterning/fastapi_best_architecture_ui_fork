@@ -1,26 +1,23 @@
 <template>
   <Breadcrumb :items="[$t('menu.data'), $t('menu.data.doc')]" />
     <a-tabs default-active-key="1">
-      <a-tab-pane key="1" title="PDF">
-        <PDFTable />
-      </a-tab-pane>
-      <a-tab-pane key="2" title="图片">
+      <a-tab-pane key="1" title="图片">
         <PictureTable />
       </a-tab-pane>
-      <a-tab-pane key="3" title="音频">
+      <a-tab-pane key="2" title="媒体">
         <MediaTable />
       </a-tab-pane>
-      <a-tab-pane key="4" title="文本">
+      <a-tab-pane key="3" title="文本">
         <TextTable />
       </a-tab-pane>
-      <a-tab-pane key="5" title="代码">
-        <CodeTable />
-      </a-tab-pane>
-      <a-tab-pane key="6" title="邮件">
+      <a-tab-pane key="4" title="邮件">
         <EmailTable />
       </a-tab-pane>
-      <a-tab-pane key="7" title="Excel">
+      <a-tab-pane key="5" title="Excel">
         <ExcelTable />
+      </a-tab-pane>
+      <a-tab-pane key="6" title="PDF">
+        <PDFTable />
       </a-tab-pane>
   </a-tabs>
 </template>
@@ -30,7 +27,6 @@ import PDFTable from '@/views/data/doc/components/pdf-table.vue'
 import PictureTable from '@/views/data/doc/components/picture-table.vue'
 import MediaTable from '@/views/data/doc/components/media-table.vue'
 import TextTable from '@/views/data/doc/components/text-table.vue'
-import CodeTable from '@/views/data/doc/components/code-table.vue'
 import EmailTable from '@/views/data/doc/components/email-table.vue'
 import ExcelTable from '@/views/data/doc/components/excel-table.vue'
 </script>
