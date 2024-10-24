@@ -83,7 +83,7 @@
                   <a-link @click="EditApi(record.id)">
                     {{ $t(`data.doc.columns.edit`) }}
                   </a-link>
-                  <a-link @click="ViewApi(record.id)">
+                  <a-link @click="openDetailPage(record.id)">
                     {{ $t(`查看`) }}
                   </a-link>
                   <a-link @click="HideApi(record.id)">
@@ -206,9 +206,12 @@
     } from '@/api/doc';
     import { Pagination } from '@/types/global';
     import DocDetail from '@/views/data/doc/components/doc-detail.vue'
+    import { useRouter } from 'vue-router';
+
   
     const { t } = useI18n();
     const { loading, setLoading } = useLoading(true);
+    const router = useRouter();
   
     // 表单
     const generateFormModel = () => {
@@ -256,6 +259,9 @@
       await fetchApiDetail(pk);
       openView.value = true;
     };
+    const openDetailPage = (pk: number) =>{
+      router.push({name: 'DocDetail', params: { id: pk }});
+    }
     const DeleteApi = () => {
       drawerTitle.value = t('data.doc.columns.delete.drawer');
       openDelete.value = true;

@@ -1,9 +1,7 @@
 <template>
   <div class="container">
     <a-layout style="padding: 0 18px">
-      <Breadcrumb
-        :items="[$t('menu.automation'), $t('menu.automation.codeGenerator')]"
-      />
+      <Breadcrumb />
       <a-card
         :title="$t('menu.automation.card.dataImport')"
         class="general-card"

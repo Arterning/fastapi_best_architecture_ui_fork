@@ -1,7 +1,7 @@
 <template>
     <div class="container">
       <a-layout style="padding: 0 18px">
-        <Breadcrumb :items="[$t('menu.data'), $t('menu.data.upload')]" />
+        <Breadcrumb />
         <a-card :title="$t('menu.data.upload')" class="general-card">
           <a-card :style="{ width: '100%', marginBottom: '20px' }" title="上传选项">
             <a-space size="large">

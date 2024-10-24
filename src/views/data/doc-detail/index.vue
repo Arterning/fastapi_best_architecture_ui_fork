@@ -1,5 +1,5 @@
 <template>
-    <a-space direction="vertical">
+    <!-- <a-space direction="vertical">
         <a-descriptions :column="1">
             <a-descriptions-item label="标题">
                 标题
@@ -13,7 +13,12 @@
                 <a-link @click="handleView('file')">查看</a-link>
             </a-descriptions-item>
         </a-descriptions>
-    </a-space>
+    </a-space> -->
+    <div class="container">
+        <a-layout style="padding: 0 18px">
+            <Breadcrumb />
+        </a-layout>
+    </div>
 </template>
 
 <script lang="ts" setup>

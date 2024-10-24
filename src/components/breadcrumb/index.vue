@@ -3,23 +3,48 @@
     <a-breadcrumb-item>
       <icon-apps />
     </a-breadcrumb-item>
-    <a-breadcrumb-item v-for="item in items" :key="item">
+    <!-- <a-breadcrumb-item v-for="item in items" :key="item">
       {{ $t(item) }}
+    </a-breadcrumb-item> -->
+    <a-breadcrumb-item v-for="(item, index) in breadCrumb" :key="item.label">
+      <router-link v-if="index < breadCrumb.length - 1" :to="route.path">
+        {{ $t(item.label) }}
+      </router-link>
+      <span v-else>
+        {{ $t(item.label) }}
+      </span>
+
     </a-breadcrumb-item>
   </a-breadcrumb>
 </template>
 
 <script lang="ts" setup>
-  import { PropType } from 'vue';
+  // import { PropType } from 'vue';
+  import { useRoute } from 'vue-router';
+  import { BreadcrumbRoute } from '@arco-design/web-vue';
+  import { computed } from 'vue';
 
-  defineProps({
-    items: {
-      type: Array as PropType<string[]>,
-      default() {
-        return [];
-      },
-    },
-  });
+  const route = useRoute();
+
+  // defineProps({
+  //   items: {
+  //     type: Array as PropType<BreadcrumbRoute[]>,
+  //     default() {
+  //       return [];
+  //     },
+  //   },
+  // });
+
+  const breadCrumb = computed(() => {
+      const routeStack = [] as BreadcrumbRoute[];
+      route.matched.map((r)=>{
+          return routeStack.push({
+              path: r.path,
+              label: r.meta.locale as string
+          })
+      });
+      return routeStack;
+  })
 </script>
 
 <style lang="less" scoped>

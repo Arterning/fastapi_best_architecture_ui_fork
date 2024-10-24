@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <a-layout style="padding: 0 18px">
-      <Breadcrumb :items="[$t('menu.monitor'), $t('menu.monitor.server')]" />
+      <Breadcrumb />
       <a-card :title="$t('menu.monitor.server')" class="general-card">
         <div class="content">
           <a-row :gutter="20">

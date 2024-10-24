@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <a-layout style="padding: 0 18px">
-      <Breadcrumb :items="[$t('menu.log'), $t('menu.log.opera')]" />
+      <Breadcrumb />
       <a-card :title="$t('menu.log.opera')" class="general-card">
         <a-row>
           <a-col :flex="62">

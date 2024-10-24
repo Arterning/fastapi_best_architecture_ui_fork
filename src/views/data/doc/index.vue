@@ -1,5 +1,5 @@
 <template>
-  <Breadcrumb :items="[$t('menu.data'), $t('menu.data.doc')]" />
+  <Breadcrumb />
     <a-tabs default-active-key="1">
       <a-tab-pane key="1" title="图片">
         <PictureTable />
