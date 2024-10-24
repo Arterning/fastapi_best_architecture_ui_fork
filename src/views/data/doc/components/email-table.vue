@@ -82,6 +82,9 @@
                   <a-link @click="EditApi(record.id)">
                     {{ $t(`data.doc.columns.edit`) }}
                   </a-link>
+                  <a-link @click="ViewApi(record.id)">
+                    {{ $t(`查看`) }}
+                  </a-link>
                   <a-link @click="HideApi(record.id)">
                     {{ $t(`隐藏`) }}
                   </a-link>
@@ -191,9 +194,11 @@
       updateSysDoc,
     } from '@/api/doc';
     import { Pagination } from '@/types/global';
+    import { useRouter } from 'vue-router';
   
     const { t } = useI18n();
     const { loading, setLoading } = useLoading(true);
+    const router = useRouter();
   
     // 表单
     const generateFormModel = () => {
@@ -238,6 +243,9 @@
     const DeleteApi = () => {
       drawerTitle.value = t('data.doc.columns.delete.drawer');
       openDelete.value = true;
+    };
+    const ViewApi = async (pk: number) => {
+      router.push({name: 'DocDetail', params: { id: pk }});
     };
     const HideApi = (pk: number) => {
       renderData.value = renderData.value.filter((item) => {

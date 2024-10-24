@@ -43,7 +43,7 @@
         type: string
     } | undefined>(undefined);
 
-    const id = parseInt(route.params.id[0], 10);
+    const { id } = route.params;
 
     const buildSrcURL = (file: string) => {
         let url;
@@ -78,6 +78,6 @@
     };
 
     if(id){
-        fetchApiDetail(id as number);
+        fetchApiDetail(Number(id));
     }
 </script>

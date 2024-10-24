@@ -19,6 +19,15 @@
                       />
                     </a-form-item>
                   </a-col>
+                  <a-col :span="8">
+                    <a-form-item :label="$t('内容搜索')" field="tokens">
+                      <a-input
+                        @keyup.enter="search"
+                        v-model="formModel.tokens"
+                        :placeholder="$t('内容搜索')"
+                      />
+                    </a-form-item>
+                  </a-col>
                 </a-row>
               </a-form>
             </a-col>
@@ -215,6 +224,7 @@
         name: undefined,
         title: undefined,
         type: undefined,
+        tokens: undefined,
       };
     };
     const formModel = ref(generateFormModel());
