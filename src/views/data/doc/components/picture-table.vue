@@ -356,7 +356,7 @@
         await deleteSysDoc({ pk: rowSelectKeys.value });
         cancelReq();
         Message.success(t('submit.delete.success'));
-        await fetchApiList({ page: 0, size: pagination.pageSize, type: 'picture' });
+        await fetchApiList({ page: 1, size: pagination.pageSize, type: 'picture' });
         rowSelectKeys.value = [];
       } catch (error) {
         openDelete.value = false;
