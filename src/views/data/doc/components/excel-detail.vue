@@ -5,7 +5,7 @@
                 {{ title }}
             </a-descriptions-item>
             <a-descriptions-item label="内容">
-                <a-table :columns="columns" :data="props.doc_data" />
+                <a-table :columns="columns" :data="props.doc_data" :scroll="scrollPercent" />
             </a-descriptions-item>
             <a-descriptions-item label="原始文件">
                 <a-link @click="handleView(file)">查看</a-link>
@@ -15,8 +15,12 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, computed } from 'vue';
+import { PropType, computed, ref } from 'vue';
 
+const scrollPercent = {
+    x: '200%',
+    y: 500
+};
 // 动态生成 columns
 const columns = computed(() => {
     if (props.doc_data.length > 0) {
@@ -25,6 +29,7 @@ const columns = computed(() => {
         return keys.map(key => ({
             title: key.charAt(0).toUpperCase() + key.slice(1), // 将键名首字母大写
             dataIndex: key,
+            width: 100
         }));
     }
     return []; // 如果 doc_data 为空，返回空数组

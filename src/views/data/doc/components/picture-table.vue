@@ -83,7 +83,7 @@
                   <a-link @click="EditApi(record.id)">
                     {{ $t(`data.doc.columns.edit`) }}
                   </a-link>
-                  <a-link @click="openDetailPage(record.id)">
+                  <a-link @click="ViewApi(record.id)">
                     {{ $t(`查看`) }}
                   </a-link>
                   <a-link @click="HideApi(record.id)">
@@ -173,7 +173,6 @@
               @cancel="cancelReq"
               @ok="cancelReq"
             >
-              <DocDetail :title="form.title" :content="form.content" :file="form.file"/>
             </a-modal>
           </div>
         </a-card>
@@ -205,10 +204,8 @@
       updateSysDoc,
     } from '@/api/doc';
     import { Pagination } from '@/types/global';
-    import DocDetail from '@/views/data/doc/components/doc-detail.vue'
     import { useRouter } from 'vue-router';
 
-  
     const { t } = useI18n();
     const { loading, setLoading } = useLoading(true);
     const router = useRouter();
@@ -254,14 +251,12 @@
       openNewOrEdit.value = true;
     };
     const ViewApi = async (pk: number) => {
-      operateRow.value = pk;
-      drawerTitle.value = t('查看');
-      await fetchApiDetail(pk);
-      openView.value = true;
-    };
-    const openDetailPage = (pk: number) =>{
+      // operateRow.value = pk;
+      // drawerTitle.value = t('查看');
+      // await fetchApiDetail(pk);
+      // openView.value = true;
       router.push({name: 'DocDetail', params: { id: pk }});
-    }
+    };
     const DeleteApi = () => {
       drawerTitle.value = t('data.doc.columns.delete.drawer');
       openDelete.value = true;
@@ -451,4 +446,3 @@
       padding-top: 20px;
     }
   </style>
-  

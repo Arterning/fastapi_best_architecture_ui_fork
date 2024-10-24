@@ -6,14 +6,8 @@
     <!-- <a-breadcrumb-item v-for="item in items" :key="item">
       {{ $t(item) }}
     </a-breadcrumb-item> -->
-    <a-breadcrumb-item v-for="(item, index) in breadCrumb" :key="item.label">
-      <router-link v-if="index < breadCrumb.length - 1" :to="route.path">
+    <a-breadcrumb-item v-for="item in breadCrumb" :key="item.label">
         {{ $t(item.label) }}
-      </router-link>
-      <span v-else>
-        {{ $t(item.label) }}
-      </span>
-
     </a-breadcrumb-item>
   </a-breadcrumb>
 </template>
@@ -37,7 +31,7 @@
 
   const breadCrumb = computed(() => {
       const routeStack = [] as BreadcrumbRoute[];
-      route.matched.map((r)=>{
+      route.matched.map((r) => {
           return routeStack.push({
               path: r.path,
               label: r.meta.locale as string

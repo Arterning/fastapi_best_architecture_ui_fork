@@ -28,7 +28,7 @@ const DASHBOARD: AppRouteRecordRaw = {
     {
       path: 'doc-detail/:id',
       name: 'DocDetail',
-      component: () => import('@/views/data/doc-detail/index.vue'),
+      component: () => import('@/views/data/doc/components/doc-detail.vue'),
       meta: {
         locale: 'menu.data.doc.detail',
         requiresAuth: true,
