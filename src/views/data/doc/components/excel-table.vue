@@ -82,6 +82,9 @@
                   <a-link @click="EditApi(record.id)">
                     {{ $t(`data.doc.columns.edit`) }}
                   </a-link>
+                  <a-link @click="ViewApi(record.id)">
+                    {{ $t(`查看`) }}
+                  </a-link>
                   <a-link @click="HideApi(record.id)">
                     {{ $t(`隐藏`) }}
                   </a-link>
@@ -161,6 +164,16 @@
                 {{ $t('modal.title.tips.delete') }}
               </a-space>
             </a-modal>
+            <a-modal
+              :closable="false"
+              :title="`${$t('内容')}`"
+              :visible="openView"
+              fullscreen
+              @cancel="cancelReq"
+              @ok="cancelReq"
+            >
+              <ExcelDetail :title="form.title" :doc_data="form.doc_data" :file="form.file"/>
+            </a-modal>
           </div>
         </a-card>
       </a-layout>
@@ -191,6 +204,7 @@
       updateSysDoc,
     } from '@/api/doc';
     import { Pagination } from '@/types/global';
+    import ExcelDetail from '@/views/data/doc/components/excel-detail.vue'
   
     const { t } = useI18n();
     const { loading, setLoading } = useLoading(true);
@@ -244,6 +258,12 @@
         return item.id !== pk
       })
     };
+    const ViewApi = async (pk: number) => {
+      operateRow.value = pk;
+      drawerTitle.value = t('查看');
+      await fetchApiDetail(pk);
+      openView.value = true;
+    };
     const columns = computed<TableColumnData[]>(() => [
       {
         title: 'ID',
@@ -272,10 +292,12 @@
     // 对话框
     const openNewOrEdit = ref<boolean>(false);
     const openDelete = ref<boolean>(false);
+    const openView = ref<boolean>(false);
     const drawerTitle = ref<string>('');
     const cancelReq = () => {
       openNewOrEdit.value = false;
       openDelete.value = false;
+      openView.value = false;
     };
     const formDefaultValues: SysDocReq = {
       name: '',
@@ -283,6 +305,7 @@
       type: '',
       desc: '',
       content: undefined,
+      doc_data: undefined,
     };
     const form = reactive<SysDocReq>({ ...formDefaultValues });
     const buttonStatus = ref<string>();

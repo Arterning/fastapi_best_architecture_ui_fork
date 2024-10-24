@@ -8,6 +8,7 @@ export interface SysDocReq {
   content?: string;
   type?: string;
   file?: string;
+  doc_data?: Record<string, any>[];
 }
 
 export interface SysDocRes extends SysDocReq {
