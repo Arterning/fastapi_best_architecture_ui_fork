@@ -15,9 +15,15 @@
                         <pre>{{ info.content }} </pre>
                     </a-descriptions-item>
                     <a-descriptions-item label="预览">
-                        <img v-if="info.type==='picture'" :src="info.src" style="width:100%" alt="">
-                        <video v-if="info.type==='media'" :src="info.src" controls></video>
-                        <iframe v-if="info.type==='pdf'" :src="info.src" style="width:75vw;height:65vh" frameborder="0"></iframe>
+                        <keep-alive>
+                            <img v-if="info.type==='picture'" :src="info.src" style="width:100%" alt="">
+                        </keep-alive>
+                        <keep-alive>
+                            <video v-if="info.type==='media'" :src="info.src" controls></video>
+                        </keep-alive>
+                        <keep-alive>
+                            <iframe v-if="info.type==='pdf'" :src="info.src" style="width:75vw;height:65vh" frameborder="0"></iframe>
+                        </keep-alive>
                     </a-descriptions-item>
                 </a-descriptions>
             </a-space>        
