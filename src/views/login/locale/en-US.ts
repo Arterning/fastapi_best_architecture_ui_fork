@@ -1,6 +1,6 @@
 export default {
-  'login.form.title': 'Login FBA',
-  'login.form.sub_title': 'fastapi_best_architecture',
+  'login.form.title': 'Login',
+  'login.form.sub_title': '数据治理平台',
   'login.form.username.errMsg': 'Username cannot be empty',
   'login.form.password.errMsg': 'Password cannot be empty',
   'login.form.captcha.errMsg': 'Captcha cannot be empty',

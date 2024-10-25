@@ -124,7 +124,8 @@
             :size="32"
             :style="{ marginRight: '8px', cursor: 'pointer' }"
           >
-            <img :src="avatar" alt="avatar" />
+          <img v-if="!!avatar" :src="avatar" alt="avatar" />
+          <IconUser v-else />
           </a-avatar>
           <template #content>
             <a-doption>
@@ -166,6 +167,7 @@
   import useLocale from '@/hooks/locale';
   import useUser from '@/hooks/user';
   import Menu from '@/components/menu/index.vue';
+  import { IconUser } from '@arco-design/web-vue/es/icon';
 
   const appStore = useAppStore();
   const userStore = useUserStore();
