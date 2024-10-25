@@ -78,7 +78,7 @@
           {{ $t('login.form.register') }}
         </a-button>
       </a-space>
-      <a-divider orientation="center" margin="28px">
+      <!-- <a-divider orientation="center" margin="28px">
         <p style="color: var(--color-text-3) !important">
           {{ $t('login.form.oauth_login') }}
         </p>
@@ -148,7 +148,7 @@
             />
           </template>
         </a-button>
-      </a-space>
+      </a-space> -->
     </a-form>
   </div>
 </template>

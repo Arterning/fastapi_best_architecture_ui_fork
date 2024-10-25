@@ -1,5 +1,6 @@
 <template>
-  <Breadcrumb />
+  <a-layout style="padding: 0 18px">
+    <Breadcrumb />
     <a-tabs default-active-key="1">
       <a-tab-pane key="1" title="图片">
         <PictureTable />
@@ -19,7 +20,8 @@
       <a-tab-pane key="6" title="PDF">
         <PDFTable />
       </a-tab-pane>
-  </a-tabs>
+    </a-tabs>
+  </a-layout>
 </template>
 
 <script setup lang="ts">

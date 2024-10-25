@@ -4,13 +4,14 @@
       <a-space>
         <img
           alt="logo"
-          src="//p3-armor.byteimg.com/tos-cn-i-49unhts6dw/dfdba5317c0c20ce20e64fac803d52bc.svg~tplv-49unhts6dw-image.image"
+          src="@/assets/images/logo.png"
+          style="width:2rem"
         />
         <a-typography-title
           :heading="5"
           :style="{ margin: 0, fontSize: '18px' }"
         >
-          Arco Pro
+          数据治理平台
         </a-typography-title>
         <icon-menu-fold
           v-if="!topMenu && appStore.device === 'mobile'"

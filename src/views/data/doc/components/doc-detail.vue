@@ -11,12 +11,17 @@
                         {{ info.desc }}
                         </pre>
                     </a-descriptions-item> -->
-                    <a-descriptions-item label="内容">
-                        <pre>{{ info.content }} </pre>
+                    <a-descriptions-item label="内容" >
+                        <div class="content-box">
+                            <pre>{{ info.content }} </pre>
+                        </div>
                     </a-descriptions-item>
                     <a-descriptions-item label="预览">
                         <keep-alive>
-                            <img v-if="info.type==='picture'" :src="info.src" style="width:100%" alt="">
+                            <a-image
+                                v-if="info.type==='picture'"
+                                :src="info.src"
+                            />
                         </keep-alive>
                         <keep-alive>
                             <video v-if="info.type==='media'" :src="info.src" controls></video>
@@ -31,13 +36,11 @@
     </div>
 </template>
 
-    <script lang="ts" setup>
+<script lang="ts" setup>
     import { querySysDocDetail } from '@/api/doc';
     import useLoading from '@/hooks/loading';
     import { ref } from 'vue';
     import { useRoute } from 'vue-router';
-    // import AudioPlayer from '@/components/audioplayer/index.vue';
-    // import MediaPlayer from '@/components/mediaplayer/index.vue';
 
     const route = useRoute();
     const { loading, setLoading } = useLoading(true);
@@ -87,3 +90,33 @@
         fetchApiDetail(Number(id));
     }
 </script>
+
+<style scoped>
+.content-box{
+    display: flex;
+    width: 70vw;
+    max-height: 65vh;
+    overflow: auto;
+}
+
+::-webkit-scrollbar {
+    width: 0.5rem;
+    height: 0.5rem;
+    display: block;
+}
+
+/* 设置滚动条轨道的背景色 */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* 设置滚动条滑块的颜色 */
+::-webkit-scrollbar-thumb {
+    background: #999;
+}
+
+/* 设置滚动条滑块在悬停时的颜色 */
+::-webkit-scrollbar-thumb:hover {
+    background: #777;
+}
+</style>

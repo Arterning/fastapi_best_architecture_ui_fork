@@ -3,9 +3,10 @@
     <div class="logo">
       <img
         alt="logo"
-        src="//p3-armor.byteimg.com/tos-cn-i-49unhts6dw/dfdba5317c0c20ce20e64fac803d52bc.svg~tplv-49unhts6dw-image.image"
+        src="@/assets/images/logo.png"
+        style="width:2rem"
       />
-      <div class="logo-text">Arco Design Pro</div>
+      <div class="logo-text">数据治理平台</div>
     </div>
     <LoginBanner />
     <div class="content">
@@ -32,7 +33,7 @@
 
     .banner {
       width: 550px;
-      background: linear-gradient(163.85deg, #1d2129 0%, #00308f 100%);
+      background: linear-gradient(163.85deg, #1d2129 0%, #1a8f97 100%);
     }
 
     .content {
