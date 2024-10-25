@@ -25,7 +25,7 @@
 import { PropType, computed, ref } from 'vue';
 
 const scrollPercent = {
-    x: 'auto',
+    x: '100%',
     y: 500
 };
 // 动态生成 columns

@@ -2,37 +2,40 @@
     <div class="container">
         <a-layout style="padding: 0 18px">
             <Breadcrumb />
+            <a-card v-if="info" :title="info.title" class="general-card">
+                <a-space direction="vertical">
+                    <a-descriptions :column="1">
+                        <!-- <a-descriptions-item label="描述">
+                            <pre>
+                            {{ info.desc }}
+                            </pre>
+                        </a-descriptions-item> -->
+                        <a-descriptions-item label="内容" >
+                            <div class="content-box">
+                                <pre>{{ info.content }} </pre>
+                            </div>
+                        </a-descriptions-item>
+                        <a-descriptions-item label="预览">
+                            <keep-alive>
+                                <a-tooltip content="点击以查看">
+                                    <a-image
+                                        style="cursor:pointer"
+                                        v-if="info.type==='picture'"
+                                        :src="info.src"
+                                    />
+                                </a-tooltip>
+                            </keep-alive>
+                            <keep-alive>
+                                <video v-if="info.type==='media'" :src="info.src" controls></video>
+                            </keep-alive>
+                            <keep-alive>
+                                <iframe v-if="info.type==='pdf'" :src="info.src" style="width:75vw;height:65vh" frameborder="0"></iframe>
+                            </keep-alive>
+                        </a-descriptions-item>
+                    </a-descriptions>
+                </a-space>        
+            </a-card>
         </a-layout>
-        <a-card v-if="info" :title="info.title" class="general-card">
-            <a-space direction="vertical">
-                <a-descriptions :column="1">
-                    <!-- <a-descriptions-item label="描述">
-                        <pre>
-                        {{ info.desc }}
-                        </pre>
-                    </a-descriptions-item> -->
-                    <a-descriptions-item label="内容" >
-                        <div class="content-box">
-                            <pre>{{ info.content }} </pre>
-                        </div>
-                    </a-descriptions-item>
-                    <a-descriptions-item label="预览">
-                        <keep-alive>
-                            <a-image
-                                v-if="info.type==='picture'"
-                                :src="info.src"
-                            />
-                        </keep-alive>
-                        <keep-alive>
-                            <video v-if="info.type==='media'" :src="info.src" controls></video>
-                        </keep-alive>
-                        <keep-alive>
-                            <iframe v-if="info.type==='pdf'" :src="info.src" style="width:75vw;height:65vh" frameborder="0"></iframe>
-                        </keep-alive>
-                    </a-descriptions-item>
-                </a-descriptions>
-            </a-space>        
-        </a-card>
     </div>
 </template>
 
@@ -91,7 +94,7 @@
     }
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 .content-box{
     display: flex;
     width: 70vw;

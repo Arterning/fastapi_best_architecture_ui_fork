@@ -174,14 +174,14 @@
   }
 
   .link-activated {
-    color: rgb(var(--link-6));
+    color: rgb(var(--primary-6));
 
     .tag-link {
-      color: rgb(var(--link-6));
+      color: rgb(var(--primary-6));
     }
 
     & + .arco-tag-close-btn {
-      color: rgb(var(--link-6));
+      color: rgb(var(--primary-6));
     }
   }
 

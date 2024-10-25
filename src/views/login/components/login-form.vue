@@ -43,7 +43,7 @@
           </template>
         </a-input-password>
       </a-form-item>
-      <a-form-item
+      <!-- <a-form-item
         :rules="[{ required: true, message: $t('login.form.captcha.errMsg') }]"
         :validate-trigger="['change', 'blur']"
         field="captcha"
@@ -59,7 +59,7 @@
         <div class="captcha-wrapper" @click="refreshCaptcha">
           <a-image class="captcha-wrapper" :preview="false" :src="imageSrc" />
         </div>
-      </a-form-item>
+      </a-form-item> -->
       <a-space :size="16" direction="vertical">
         <div class="login-form-password-actions">
           <a-checkbox
@@ -185,15 +185,15 @@
   });
 
   const imageSrc = ref('');
-  const refreshCaptcha = async () => {
-    try {
-      const captcha = await userStore.captcha();
-      imageSrc.value = `data:image/png;base64, ${captcha}`;
-    } catch (err) {
-      errorMessage.value = (err as HttpError).msg;
-    }
-  };
-  refreshCaptcha();
+  // const refreshCaptcha = async () => {
+  //   try {
+  //     const captcha = await userStore.captcha();
+  //     imageSrc.value = `data:image/png;base64, ${captcha}`;
+  //   } catch (err) {
+  //     errorMessage.value = (err as HttpError).msg;
+  //   }
+  // };
+  // refreshCaptcha();
 
   const handleSubmit = async ({
     errors,
@@ -243,13 +243,13 @@
     loginConfig.value.rememberPassword = value;
   };
 
-  const linuxDoOAuth2 = async () => {
-    try {
-      window.location.href = await getOAuth2LinuxDo();
-    } catch (error) {
-      // console.log(error);
-    }
-  };
+  // const linuxDoOAuth2 = async () => {
+  //   try {
+  //     window.location.href = await getOAuth2LinuxDo();
+  //   } catch (error) {
+  //     // console.log(error);
+  //   }
+  // };
 </script>
 
 <style lang="less" scoped>
