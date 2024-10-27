@@ -273,13 +273,17 @@
         slotName: 'index',
         ellipsis: true,
         tooltip: true,
-        width: 50,
       },
       {
         title: t('data.doc.columns.name'),
         dataIndex: 'name',
         slotName: 'name',
-        width: 500,
+        ellipsis: true,
+      },
+      {
+        title: t('文件类型'),
+        dataIndex: 'type',
+        slotName: 'type',
         ellipsis: true,
       },
       {
@@ -287,7 +291,6 @@
         dataIndex: 'operate',
         slotName: 'operate',
         align: 'center',
-        width: 150,
       },
     ]);
   
@@ -331,12 +334,12 @@
           await createSysDoc(form);
           cancelReq();
           Message.success(t('submit.create.success'));
-          await fetchApiList({ page: 1, size: pagination.pageSize, type: 'code' });
+          await fetchApiList({ page: 1, size: pagination.pageSize});
         } else {
           await updateSysDoc(operateRow.value, form);
           cancelReq();
           Message.success(t('submit.update.success'));
-          await fetchApiList({ page: 1, size: pagination.pageSize, type: 'code' });
+          await fetchApiList({ page: 1, size: pagination.pageSize});
         }
       } catch (error) {
         // console.log(error);
@@ -357,7 +360,7 @@
         await deleteSysDoc({ pk: rowSelectKeys.value });
         cancelReq();
         Message.success(t('submit.delete.success'));
-        await fetchApiList({ page: 1, size: pagination.pageSize, type: 'code' });
+        await fetchApiList({ page: 1, size: pagination.pageSize});
         rowSelectKeys.value = [];
       } catch (error) {
         openDelete.value = false;
@@ -382,7 +385,7 @@
         setLoading(false);
       }
     };
-    fetchApiList({ page: 1, size: pagination.pageSize, type: 'code' });
+    fetchApiList({ page: 1, size: pagination.pageSize});
   
     // 请求部门详情
     const fetchApiDetail = async (pk: number) => {
@@ -399,13 +402,13 @@
   
     // 事件: 分页
     const onPageChange = async (current: number) => {
-      await fetchApiList({ page: current, size: pagination.pageSize, type: 'code' });
+      await fetchApiList({ page: current, size: pagination.pageSize});
     };
   
     // 事件: 分页大小
     const onPageSizeChange = async (pageSize: number) => {
       pagination.pageSize = pageSize;
-      await fetchApiList({ page: 1, size: pageSize, type: 'code' });
+      await fetchApiList({ page: 1, size: pageSize});
     };
   
     // 搜索
