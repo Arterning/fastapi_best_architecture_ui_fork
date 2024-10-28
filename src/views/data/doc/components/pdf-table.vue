@@ -80,12 +80,7 @@
               </template>
               <template #name="{ record }">
               <a-link
-                @click="
-                  $router.push({
-                    name: 'DocDetail',
-                    query: { id: record.id },
-                  })
-                "
+                @click="router.push({name: 'DocDetail', params: { id: record.id }})"
               >{{ record.name }}</a-link>
               </template> 
               <template #operate="{ record }">
@@ -409,7 +404,7 @@
         setLoading(false);
       }
     };
-    
+
     // 事件: 分页
     const onPageChange = async (current: number) => {
       await fetchApiList({ page: current, size: pagination.pageSize, type: 'pdf' });
