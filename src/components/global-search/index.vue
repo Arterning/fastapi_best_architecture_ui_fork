@@ -7,8 +7,7 @@
   <a-modal v-model:visible="visible" @ok="handleOk" @cancel="handleCancel" fullscreen>
     <template #title>
       <a-space direction="vertical" size="large" class="modal-title">
-        <a-input v-model="searchQuery" class="search" placeholder="Search" allow-clear @input="handleInput"
-          @keyup.enter="handleEnter">
+        <a-input v-model="searchQuery" class="search" placeholder="Search" allow-clear @input="handleInput" @clear="showHistory=true">
           <template #prefix>
             <icon-search />
           </template>
@@ -30,9 +29,9 @@
       </a-list>
     </div>
     <div v-else class="searchResults">
-      <div>搜索到{{ searchResults.length }}个结果</div>
+      <div class="result-count">搜索到{{ searchResults.length }}个结果</div>
 
-      <a-list :max-height="240">
+      <a-list>
         <!-- <a :href="result.url"> </a> -->
         <!-- <router-link :to=""> -->
         <a-list-item v-for="result in searchResults" :key="result.id">
@@ -97,7 +96,7 @@ const handleInput = async () => {
   }
 };
 
-const handleEnter = () => {
+const updateHistory = () => {
   if (searchQuery.value) {
     // 如果搜索历史中已经存在该记录，则先删除它
     const index = historyItems.value.indexOf(searchQuery.value);
@@ -115,9 +114,10 @@ const handleEnter = () => {
     localStorage.setItem('searchHistory', JSON.stringify(historyItems.value));
   }
 };
+
 const historyHandle = (item: any) => {
   searchQuery.value = item;
-  handleEnter();
+  updateHistory();
   handleInput();
 };
 
@@ -144,8 +144,9 @@ onMounted(loadSearchHistory);
 
 // 搜索结果跳转
 const handleResultClick = (item: SysDocQueryRes) => {
+
   router.push({ name: 'DocDetail', params: { id: item.id } });
-  handleEnter();
+  updateHistory();
   visible.value = false;
 };
 
@@ -166,6 +167,8 @@ const highlightedHit = (hit: string | undefined) => {
 
 .modal-title {
   width: 100%;
+  margin-right: 2rem;
+  border-radius: 2rem;
 }
 
 .search {
@@ -194,6 +197,10 @@ const highlightedHit = (hit: string | undefined) => {
 .searchResults {
   width: 100%;
   height: 100%;
+
+  .result-count{
+    margin-bottom: 1rem;
+  }
 }
 
 .history-header {
