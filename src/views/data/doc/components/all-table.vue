@@ -74,6 +74,7 @@
               row-key="id"
               @page-change="onPageChange"
               @page-size-change="onPageSizeChange"
+              @cell-click="onCellClick"
             >
               <template #index="{ rowIndex }">
                 {{ rowIndex + 1 }}
@@ -83,7 +84,7 @@
                   <a-link @click="EditApi(record.id)">
                     {{ $t(`data.doc.columns.edit`) }}
                   </a-link>
-                  <a-link @click="ViewApi(record.id)">
+                  <a-link @click="ViewApi(record.id, record.type)">
                     {{ $t(`查看`) }}
                   </a-link>
                   <a-link @click="HideApi(record.id)">
@@ -169,10 +170,16 @@
               :closable="false"
               :title="`${$t('内容')}`"
               :visible="openView"
-              :width="650"
+              fullscreen
               @cancel="cancelReq"
               @ok="cancelReq"
             >
+            <ExcelDetail 
+            v-if="form.type==='excel'"
+            :title="form.title" 
+            :doc_data="form.doc_data" 
+            :file="form.file"/>
+             <GeneralDetail v-else :info="form"/>
             </a-modal>
           </div>
         </a-card>
@@ -188,6 +195,7 @@
       Message,
       SelectOptionData,
       TableColumnData,
+      TableData,
     } from '@arco-design/web-vue';
     import { useI18n } from 'vue-i18n';
     import { computed, reactive, ref } from 'vue';
@@ -205,6 +213,8 @@
     } from '@/api/doc';
     import { Pagination } from '@/types/global';
     import { useRouter } from 'vue-router';
+    import GeneralDetail from './general-detail.vue';
+    import ExcelDetail from './excel-detail.vue';
 
     const { t } = useI18n();
     const { loading, setLoading } = useLoading(true);
@@ -250,12 +260,12 @@
       await fetchApiDetail(pk);
       openNewOrEdit.value = true;
     };
-    const ViewApi = async (pk: number) => {
-      // operateRow.value = pk;
-      // drawerTitle.value = t('查看');
-      // await fetchApiDetail(pk);
-      // openView.value = true;
-      router.push({name: 'DocDetail', params: { id: pk }});
+    const ViewApi = async (pk: number, type: string) => {
+      operateRow.value = pk;
+      drawerTitle.value = t('查看');
+      await fetchApiDetail(pk);
+      openView.value = true;
+      // router.push({name: 'DocDetail', params: { id: pk }});
     };
     const DeleteApi = () => {
       drawerTitle.value = t('data.doc.columns.delete.drawer');
@@ -399,6 +409,13 @@
         setLoading(false);
       }
     };
+
+    // 事件： 点击表格项
+    const onCellClick = (record: TableData, column: TableColumnData) => {
+      if(column.dataIndex === 'name'){ // 只在点击文件名时生效
+        router.push({name: 'DocDetail', params: { id: record.id }});
+      }
+    }
   
     // 事件: 分页
     const onPageChange = async (current: number) => {

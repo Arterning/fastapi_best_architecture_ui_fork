@@ -1,125 +1,94 @@
 <template>
-    <div class="container">
-        <a-layout style="padding: 0 18px">
-            <Breadcrumb />
-            <a-card v-if="info" :title="info.title" class="general-card">
-                <a-space direction="vertical">
-                    <a-descriptions :column="1">
-                        <!-- <a-descriptions-item label="描述">
-                            <pre>
-                            {{ info.desc }}
-                            </pre>
-                        </a-descriptions-item> -->
-                        <a-descriptions-item label="内容" >
-                            <div class="content-box">
-                                <pre>{{ info.content }} </pre>
-                            </div>
-                        </a-descriptions-item>
-                        <a-descriptions-item label="预览">
-                            <keep-alive>
-                                <a-tooltip content="点击以查看">
-                                    <a-image
-                                        style="cursor:pointer"
-                                        v-if="info.type==='picture'"
-                                        :src="info.src"
-                                    />
-                                </a-tooltip>
-                            </keep-alive>
-                            <keep-alive>
-                                <video v-if="info.type==='media'" :src="info.src" controls></video>
-                            </keep-alive>
-                            <keep-alive>
-                                <iframe v-if="info.type==='pdf'" :src="info.src" style="width:75vw;height:65vh" frameborder="0"></iframe>
-                            </keep-alive>
-                        </a-descriptions-item>
-                    </a-descriptions>
-                </a-space>        
-            </a-card>
-        </a-layout>
-    </div>
+  <div class="container">
+      <a-layout style="padding: 0 18px">
+          <Breadcrumb />
+          <a-card v-if="info">
+            <ExcelDetail v-if="info.type==='excel'" 
+            :title="info.title" 
+            :doc_data="info.doc_data" 
+            :file="info.file"/>
+            <GeneralDetail v-else :info="info" />
+          </a-card>
+      </a-layout>
+  </div>
 </template>
 
 <script lang="ts" setup>
-    import { querySysDocDetail } from '@/api/doc';
-    import useLoading from '@/hooks/loading';
-    import { ref } from 'vue';
-    import { useRoute } from 'vue-router';
+  import { querySysDocDetail } from '@/api/doc';
+  import useLoading from '@/hooks/loading';
+  import { ref } from 'vue';
+  import { useRoute } from 'vue-router';
+  import GeneralDetail from './general-detail.vue';
+  import ExcelDetail from './excel-detail.vue';
 
-    const route = useRoute();
-    const { loading, setLoading } = useLoading(true);
+  const route = useRoute();
+  const { loading, setLoading } = useLoading(true);
 
-    const info = ref<{
-        title?: string,
-        content?: string,
-        src?: string,
-        type: string
-    } | undefined>(undefined);
+  const info = ref<{
+      title?: string,
+      content?: string,
+      type: string,
+      doc_data?: Record<string, any>[],
+      file?: string
+  } | undefined>(undefined);
 
-    const { id } = route.params;
+  const { id } = route.params;
 
-    const buildSrcURL = (file: string) => {
-        let url;
-        if (import.meta.env.VITE_API_BASE_URL) {
-            url = `${import.meta.env.VITE_API_BASE_URL}/${file}`;
-        } else {
-            url = `${window.origin}/${file}`;
-        }
-        return url;
-    }
-
-    const fetchApiDetail = async (pk: number) => {
-        setLoading(true);
-        try {
+  const fetchApiDetail = async (pk: number) => {
+      setLoading(true);
+      try {
         const res = await querySysDocDetail(pk);
         const data = {
             title: '',
             content: '',
-            src: '',
             type: '',
+            doc_data: [] as Record<string, any>[],
+            file: ''
         };
         if(res.title) data.title = res.title;
         if(res.content) data.content = res.content;
-        if(res.file) data.src = buildSrcURL(res.file);
+        if(res.file) data.file = res.file;
         if(res.type) data.type = res.type;
+        if(res.doc_data) data.doc_data = res.doc_data;
         info.value = data;
-        } catch (error) {
-        // console.log(error);
-        } finally {
+      } catch (error) {
+      // console.log(error);
+      } finally {
         setLoading(false);
-        }
-    };
+      }
+  };
 
-    if(id){
-        fetchApiDetail(Number(id));
-    }
+  if(id){
+      fetchApiDetail(Number(id));
+  }
 </script>
 
 <style lang="less" scoped>
 .content-box{
-    display: flex;
-    width: 70vw;
-    max-height: 65vh;
-    overflow: auto;
+  display: flex;
+  width: 70vw;
+  max-height: 65vh;
+  overflow: auto;
 }
 
 ::-webkit-scrollbar {
-    width: 0.5rem;
-    height: 0.5rem;
-    display: block;
+  width: 0.5rem;
+  height: 0.5rem;
+  display: block;
 }
 
 /* 设置滚动条轨道的背景色 */
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+  background: #f1f1f1;
 }
 
 /* 设置滚动条滑块的颜色 */
 ::-webkit-scrollbar-thumb {
-    background: #999;
+  background: #999;
 }
 
 /* 设置滚动条滑块在悬停时的颜色 */
 ::-webkit-scrollbar-thumb:hover {
-    background: #777;
+  background: #777;
 }
 </style>

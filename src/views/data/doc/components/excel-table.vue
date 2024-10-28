@@ -82,6 +82,7 @@
               row-key="id"
               @page-change="onPageChange"
               @page-size-change="onPageSizeChange"
+              @cell-click="onCellClick"
             >
               <template #index="{ rowIndex }">
                 {{ rowIndex + 1 }}
@@ -197,6 +198,7 @@
       Message,
       SelectOptionData,
       TableColumnData,
+      TableData,
     } from '@arco-design/web-vue';
     import { useI18n } from 'vue-i18n';
     import { computed, reactive, ref } from 'vue';
@@ -213,11 +215,13 @@
       updateSysDoc,
     } from '@/api/doc';
     import { Pagination } from '@/types/global';
-    import ExcelDetail from '@/views/data/doc/components/excel-detail.vue'
+    import ExcelDetail from '@/views/data/doc/components/excel-detail.vue';
+    import { useRouter } from 'vue-router';
   
     const { t } = useI18n();
     const { loading, setLoading } = useLoading(true);
-  
+    const router = useRouter();
+
     // 表单
     const generateFormModel = () => {
       return {
@@ -404,7 +408,14 @@
         setLoading(false);
       }
     };
-  
+
+    // 事件： 点击表格项
+    const onCellClick = (record: TableData, column: TableColumnData) => {
+      if(column.dataIndex === 'name'){ // 只在点击文件名时生效
+        router.push({name: 'DocDetail', params: { id: record.id }});
+      }
+    }
+    
     // 事件: 分页
     const onPageChange = async (current: number) => {
       await fetchApiList({ page: current, size: pagination.pageSize, type: 'excel' });
