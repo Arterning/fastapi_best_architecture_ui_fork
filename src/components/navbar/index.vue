@@ -26,11 +26,7 @@
     <ul class="right-side">
       <li>
         <a-tooltip :content="$t('settings.search')">
-          <a-button :shape="'circle'" class="nav-btn" type="outline">
-            <template #icon>
-              <icon-search />
-            </template>
-          </a-button>
+          <GlobalSearch />
         </a-tooltip>
       </li>
       <li>
@@ -168,6 +164,7 @@
   import useUser from '@/hooks/user';
   import Menu from '@/components/menu/index.vue';
   import { IconUser } from '@arco-design/web-vue/es/icon';
+  import GlobalSearch from '@/components/global-search/index.vue';
 
   const appStore = useAppStore();
   const userStore = useUserStore();

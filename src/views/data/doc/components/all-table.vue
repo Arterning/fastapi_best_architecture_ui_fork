@@ -1,7 +1,7 @@
 <template>
     <div class="container">
       <a-layout style="padding: 0 18px">
-        <a-card :title="$t('代码文件')" class="general-card">
+        <a-card :title="$t('所有文件')" class="general-card">
           <a-row>
             <a-col :flex="62">
               <a-form
@@ -432,7 +432,6 @@
     const search = async () => {
       await fetchApiList({
         ...formModel.value,
-        type: 'code',
       } as unknown as SysDocParams);
     };
   
@@ -457,7 +456,7 @@
   
   <script lang="ts">
     export default {
-      name: 'CodeTable',
+      name: 'AllTable',
     };
   </script>
   
