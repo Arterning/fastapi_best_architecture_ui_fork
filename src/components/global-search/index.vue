@@ -35,9 +35,14 @@
       <a-list :max-height="240">
         <!-- <a :href="result.url"> </a> -->
         <!-- <router-link :to=""> -->
-        <a-list-item v-for="result in searchResults" :key="result.id" class="ResultItem" @click="handleResultClick(result)">
-          <a-list-item-meta :title="result.name"
-            :description="result.hit">
+        <a-list-item v-for="result in searchResults" :key="result.id">
+          <a-list-item-meta>
+            <template #title>
+              <a-link class="ResultItem" @click="handleResultClick(result)">{{ result.name }}</a-link>
+            </template>
+            <template #description>
+              <span v-html="highlightedHit(result.hit)"></span>
+            </template>
             <template #avatar>
               <a-avatar shape="square">{{ result.type?.toUpperCase() }}</a-avatar>
             </template>
@@ -143,6 +148,13 @@ const handleResultClick = (item: SysDocQueryRes) => {
   handleEnter();
   visible.value = false;
 };
+
+const highlightedHit = (hit: string | undefined) => {
+  if (!hit) {
+    return "";
+  }
+  return hit.replace(/<b>(.*?)<\/b>/g, `<b style="color: yellow;">$1</b>`);
+}
 </script>
 
 <style scoped lang="less">
