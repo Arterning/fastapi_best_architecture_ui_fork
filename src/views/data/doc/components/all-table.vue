@@ -59,8 +59,7 @@
               {{ $t('data.doc.button.delete') }}
             </a-button>
           </a-space>
-          <div class="content">
-            
+          <div class="content"> 
             <a-table
               v-model:selected-keys="rowSelectKeys"
               :bordered="{cell:true}"
@@ -74,11 +73,15 @@
               row-key="id"
               @page-change="onPageChange"
               @page-size-change="onPageSizeChange"
-              @cell-click="onCellClick"
             >
               <template #index="{ rowIndex }">
                 {{ rowIndex + 1 }}
               </template>
+              <template #name="{ record }">
+              <a-link
+                @click="router.push({name: 'DocDetail', params: { id: record.id }})"
+              >{{ record.name }}</a-link>
+              </template>              
               <template #operate="{ record }">
                 <a-space>
                   <a-link @click="EditApi(record.id)">
@@ -409,13 +412,6 @@
         setLoading(false);
       }
     };
-
-    // 事件： 点击表格项
-    const onCellClick = (record: TableData, column: TableColumnData) => {
-      if(column.dataIndex === 'name'){ // 只在点击文件名时生效
-        router.push({name: 'DocDetail', params: { id: record.id }});
-      }
-    }
   
     // 事件: 分页
     const onPageChange = async (current: number) => {

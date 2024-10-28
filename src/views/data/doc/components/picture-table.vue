@@ -74,11 +74,15 @@
               row-key="id"
               @page-change="onPageChange"
               @page-size-change="onPageSizeChange"
-              @cell-click="onCellClick"
             >
               <template #index="{ rowIndex }">
                 {{ rowIndex + 1 }}
               </template>
+              <template #name="{ record }">
+              <a-link
+               @click="router.push({name: 'DocDetail', params: { id: record.id }})"
+              >{{ record.name }}</a-link>
+              </template> 
               <template #operate="{ record }">
                 <a-space>
                   <a-link @click="EditApi(record.id)">
@@ -255,11 +259,11 @@
       openNewOrEdit.value = true;
     };
     const ViewApi = async (pk: number) => {
-      // operateRow.value = pk;
-      // drawerTitle.value = t('查看');
-      // await fetchApiDetail(pk);
-      // openView.value = true;
-      router.push({name: 'DocDetail', params: { id: pk }});
+      operateRow.value = pk;
+      drawerTitle.value = t('查看');
+      await fetchApiDetail(pk);
+      openView.value = true;
+      // router.push({name: 'DocDetail', params: { id: pk }});
     };
     const DeleteApi = () => {
       drawerTitle.value = t('data.doc.columns.delete.drawer');
@@ -400,13 +404,6 @@
         setLoading(false);
       }
     };
-    
-    // 事件： 点击表格项
-    const onCellClick = (record: TableData, column: TableColumnData) => {
-      if(column.dataIndex === 'name'){ // 只在点击文件名时生效
-        router.push({name: 'DocDetail', params: { id: record.id }});
-      }
-    }
 
     // 事件: 分页
     const onPageChange = async (current: number) => {

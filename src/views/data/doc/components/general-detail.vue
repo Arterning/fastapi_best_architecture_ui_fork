@@ -20,10 +20,10 @@
                     </a-tooltip>
                 </keep-alive>
                 <keep-alive>
-                    <video v-if="info.type==='media'" :src="buildSrcURL(info.file)" controls></video>
+                    <video v-if="info.type==='media'" :src="buildSrcURL(info.file)"  style="width:75vw;height:65vh" controls></video>
                 </keep-alive>
                 <keep-alive>
-                    <iframe v-if="info.type==='pdf'" :src="buildSrcURL(info.file)" style="width:75vw;height:65vh" frameborder="0"></iframe>
+                    <iframe v-if="info.type==='pdf'" :src="buildSrcURL(info.file)" style="width:75vw;" frameborder="0"></iframe>
                 </keep-alive>
             </a-descriptions-item>
             <a-descriptions-item label="内容" >
