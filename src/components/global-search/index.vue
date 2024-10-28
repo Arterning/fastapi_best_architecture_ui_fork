@@ -31,7 +31,7 @@
     <div v-else class="searchResults">
       <div class="result-count">搜索到{{ searchResults.length }}个结果</div>
 
-      <a-list>
+      <a-list :max-height="500">
         <!-- <a :href="result.url"> </a> -->
         <!-- <router-link :to=""> -->
         <a-list-item v-for="result in searchResults" :key="result.id">
