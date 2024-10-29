@@ -12,9 +12,12 @@
             </a-descriptions-item>
         </a-descriptions>
     </a-space>
+    <a-row style="margin: 10px 0;max-width:50vw">
+        <a-input v-model="term" @keyup.enter="search" placeholder="搜索"/>
+    </a-row>
     <a-table 
         :columns="columns" 
-        :data="props.doc_data" 
+        :data="filteredData" 
         column-resizable 
         :bordered="{cell:true}"
         :ellipsis="true"
@@ -22,7 +25,27 @@
 </template>
 
 <script lang="ts" setup>
-import { PropType, computed, ref } from 'vue';
+import { PropType, computed, ref, watchEffect } from 'vue';
+
+const term = ref('')
+const data = ref<Record<string, any>[]>([])
+const filteredData = ref<Record<string, any>[]>([]);
+
+const search = () => {
+    if (term.value) {
+        // 根据 term 过滤数据
+        filteredData.value = data.value.filter(item => 
+            Object.values(item).some(v => {
+                const value = `${v}`;
+                return value.includes(term.value);
+            })
+        );
+    } else {
+        // 如果 term 为空，返回原始数据
+        filteredData.value = data.value;
+    }
+};
+
 
 const scrollPercent = {
     x: '100%',
@@ -57,6 +80,12 @@ const props = defineProps({
         default: '',
     },
 });
+
+// Model 组件需要接受props的变化
+watchEffect(() => {
+    data.value = props.doc_data;
+    filteredData.value = data.value;
+})
 
 const handleView = (file: string) => {
     let url;
