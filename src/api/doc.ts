@@ -13,6 +13,10 @@ export interface SysDocReq {
 
 export interface SysDocRes extends SysDocReq {
   id: number;
+  email_from?: string;
+  email_to?: string;
+  email_subject?: string;
+  email_time?: string;
 }
 
 export interface SysDocQueryRes {

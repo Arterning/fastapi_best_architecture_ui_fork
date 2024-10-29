@@ -1,8 +1,20 @@
 <template>
     <a-space direction="vertical">
         <a-descriptions :column="1">
-            <a-descriptions-item label="标题">
+            <a-descriptions-item label="文件标题">
                 {{ info.title }}
+            </a-descriptions-item>
+            <a-descriptions-item label="发件人" v-if="info.type==='email'" >
+                {{ info.email_from }}
+            </a-descriptions-item>
+            <a-descriptions-item label="收件人" v-if="info.type==='email'" >
+                {{ info.email_to }}
+            </a-descriptions-item>
+            <a-descriptions-item label="邮件主题" v-if="info.type==='email'" >
+                {{ info.email_subject }}
+            </a-descriptions-item>
+            <a-descriptions-item label="邮件时间" v-if="info.type==='email'" >
+                {{ info.email_time }}
             </a-descriptions-item>
             <a-descriptions-item label="摘要">
                 <pre>

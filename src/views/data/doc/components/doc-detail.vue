@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { querySysDocDetail } from '@/api/doc';
+  import { querySysDocDetail, SysDocRes } from '@/api/doc';
   import useLoading from '@/hooks/loading';
   import { ref } from 'vue';
   import { useRoute } from 'vue-router';
@@ -24,13 +24,7 @@
   const route = useRoute();
   const { loading, setLoading } = useLoading(true);
 
-  const info = ref<{
-      title?: string,
-      content?: string,
-      type: string,
-      doc_data?: Record<string, any>[],
-      file?: string
-  } | undefined>(undefined);
+  const info = ref<SysDocRes>();
 
   const { id } = route.params;
 
@@ -38,19 +32,7 @@
       setLoading(true);
       try {
         const res = await querySysDocDetail(pk);
-        const data = {
-            title: '',
-            content: '',
-            type: '',
-            doc_data: [] as Record<string, any>[],
-            file: ''
-        };
-        if(res.title) data.title = res.title;
-        if(res.content) data.content = res.content;
-        if(res.file) data.file = res.file;
-        if(res.type) data.type = res.type;
-        if(res.doc_data) data.doc_data = res.doc_data;
-        info.value = data;
+        info.value = res;
       } catch (error) {
       // console.log(error);
       } finally {
