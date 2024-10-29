@@ -4,11 +4,11 @@
             <a-descriptions-item label="标题">
                 {{ info.title }}
             </a-descriptions-item>
-            <!-- <a-descriptions-item label="描述">
+            <a-descriptions-item label="摘要">
                 <pre>
                 {{ info.desc }}
                 </pre>
-            </a-descriptions-item> -->
+            </a-descriptions-item>
             <a-descriptions-item label="预览">
                 <keep-alive>
                     <a-tooltip content="点击以查看">

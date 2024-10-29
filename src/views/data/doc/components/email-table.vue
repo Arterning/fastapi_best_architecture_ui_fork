@@ -19,6 +19,42 @@
                       />
                     </a-form-item>
                   </a-col>
+                  <a-col :span="8">
+                    <a-form-item :label="$t('主题')" field="email_subject">
+                      <a-input
+                        @keyup.enter="search"
+                        v-model="formModel.email_subject"
+                        :placeholder="$t('搜索主题')"
+                      />
+                    </a-form-item>
+                  </a-col>
+                  <a-col :span="8">
+                    <a-form-item :label="$t('发件人')" field="email_from">
+                      <a-input
+                        @keyup.enter="search"
+                        v-model="formModel.email_from"
+                        :placeholder="$t('搜索发件人')"
+                      />
+                    </a-form-item>
+                  </a-col>
+                  <a-col :span="8">
+                    <a-form-item :label="$t('收件人')" field="email_to">
+                      <a-input
+                        @keyup.enter="search"
+                        v-model="formModel.email_to"
+                        :placeholder="$t('搜索收件人')"
+                      />
+                    </a-form-item>
+                  </a-col>
+                  <a-col :span="8">
+                    <a-form-item :label="$t('时间')" field="email_time">
+                      <a-input
+                        @keyup.enter="search"
+                        v-model="formModel.email_time"
+                        :placeholder="$t('搜索时间')"
+                      />
+                    </a-form-item>
+                  </a-col>
                 </a-row>
               </a-form>
             </a-col>
@@ -212,6 +248,10 @@
         name: undefined,
         title: undefined,
         type: undefined,
+        email_subject: undefined,
+        email_from: undefined,
+        email_to: undefined,
+        email_time: undefined,
       };
     };
     const formModel = ref(generateFormModel());
@@ -271,7 +311,30 @@
         title: t('data.doc.columns.name'),
         dataIndex: 'name',
         slotName: 'name',
-        width: 500,
+        ellipsis: true,
+      },
+      {
+        title: t('邮件主题'),
+        dataIndex: 'email_subject',
+        slotName: 'email_subject',
+        ellipsis: true,
+      },
+      {
+        title: t('邮件发送人'),
+        dataIndex: 'email_from',
+        slotName: 'email_from',
+        ellipsis: true,
+      },
+      {
+        title: t('邮件接受人'),
+        dataIndex: 'email_to',
+        slotName: 'email_to',
+        ellipsis: true,
+      },
+      {
+        title: t('邮件时间'),
+        dataIndex: 'email_time',
+        slotName: 'email_time',
         ellipsis: true,
       },
       {
@@ -279,7 +342,6 @@
         dataIndex: 'operate',
         slotName: 'operate',
         align: 'center',
-        width: 150,
       },
     ]);
   
