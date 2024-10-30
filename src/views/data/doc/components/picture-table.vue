@@ -81,6 +81,7 @@
               <template #name="{ record }">
               <a-link
                @click="router.push({name: 'DocDetail', params: { id: record.id }})"
+               class="title-link"
               >{{ record.name }}</a-link>
               </template> 
               <template #operate="{ record }">
@@ -452,5 +453,11 @@
   <style lang="less" scoped>
     .content {
       padding-top: 20px;
+    }
+    .title-link{
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      display:block;
     }
   </style>

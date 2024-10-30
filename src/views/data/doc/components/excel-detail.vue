@@ -12,8 +12,16 @@
             </a-descriptions-item>
         </a-descriptions>
     </a-space>
-    <a-row style="margin: 10px 0;max-width:50vw">
-        <a-input v-model="term" @keyup.enter="search" placeholder="搜索"/>
+    <a-row :gutter="24" style="margin: 10px 0;max-width:50vw">
+        <a-col :span="12"><a-input v-model="term" placeholder="搜索"/></a-col>
+        <a-col :span="6">
+            <a-button type="primary" @click="search">
+                <template #icon>
+                <icon-search />
+                </template>
+                {{ $t('data.doc.form.search') }}
+            </a-button>
+        </a-col>
     </a-row>
     <a-table 
         :columns="columns" 

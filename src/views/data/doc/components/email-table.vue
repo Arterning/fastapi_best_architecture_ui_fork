@@ -116,6 +116,7 @@
               <template #name="{ record }">
               <a-link
                 @click="router.push({name: 'DocDetail', params: { id: record.id }})"
+                class="title-link"
               >{{ record.name }}</a-link>
               </template> 
               <template #operate="{ record }">
@@ -205,6 +206,16 @@
                 {{ $t('modal.title.tips.delete') }}
               </a-space>
             </a-modal>
+            <a-modal
+              :closable="false"
+              :title="`${$t('内容')}`"
+              :visible="openView"
+              fullscreen
+              @cancel="cancelReq"
+              @ok="cancelReq"
+            >
+            <GeneralDetail :info="form" />
+            </a-modal>
           </div>
         </a-card>
       </a-layout>
@@ -237,6 +248,7 @@
     } from '@/api/doc';
     import { Pagination } from '@/types/global';
     import { useRouter } from 'vue-router';
+    import GeneralDetail from './general-detail.vue';
   
     const { t } = useI18n();
     const { loading, setLoading } = useLoading(true);
@@ -291,7 +303,11 @@
       openDelete.value = true;
     };
     const ViewApi = async (pk: number) => {
-      router.push({name: 'DocDetail', params: { id: pk }});
+      operateRow.value = pk;
+      drawerTitle.value = t('查看');
+      await fetchApiDetail(pk);
+      openView.value = true;
+      // router.push({name: 'DocDetail', params: { id: pk }});
     };
     const HideApi = (pk: number) => {
       renderData.value = renderData.value.filter((item) => {
@@ -349,9 +365,11 @@
     const openNewOrEdit = ref<boolean>(false);
     const openDelete = ref<boolean>(false);
     const drawerTitle = ref<string>('');
+    const openView = ref<boolean>(false);
     const cancelReq = () => {
       openNewOrEdit.value = false;
       openDelete.value = false;
+      openView.value = false;
     };
     const formDefaultValues: SysDocReq = {
       name: '',
@@ -495,6 +513,12 @@
   <style lang="less" scoped>
     .content {
       padding-top: 20px;
+    }
+    .title-link{
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      display:block;
     }
   </style>
   

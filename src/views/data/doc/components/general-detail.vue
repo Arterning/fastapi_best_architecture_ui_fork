@@ -4,18 +4,27 @@
             <a-descriptions-item label="文件标题">
                 {{ info.title }}
             </a-descriptions-item>
-            <a-descriptions-item label="发件人" v-if="info.type==='email'" >
-                {{ info.email_from }}
+            <a-descriptions-item label="邮件头" v-if="info.type==='email'" >
+                <a-divider />
+                <div class="email-title flex mb-2">   
+                    <div class="email-label">主题</div>
+                    <div>{{ info.email_subject || '-' }}</div>
+                </div>
+                <div class="flex mb-1">
+                    <div class="email-label">发件人</div>
+                    <div :class="info.email_from?'email-person':''">{{ info.email_from || '-' }}</div>
+                </div>
+                <div class="flex mb-1">
+                    <div class="email-label">收件人</div>
+                    <div :class="info.email_to?'email-person':''">{{ info.email_to || '-' }}</div>
+                </div>
+                <div class="flex">
+                    <div class="email-label">时间</div>
+                    <div>{{ dateFormat(info.email_time) }}</div>
+                </div>
+                <a-divider />
             </a-descriptions-item>
-            <a-descriptions-item label="收件人" v-if="info.type==='email'" >
-                {{ info.email_to }}
-            </a-descriptions-item>
-            <a-descriptions-item label="邮件主题" v-if="info.type==='email'" >
-                {{ info.email_subject }}
-            </a-descriptions-item>
-            <a-descriptions-item label="邮件时间" v-if="info.type==='email'" >
-                {{ info.email_time }}
-            </a-descriptions-item>
+ 
             <a-descriptions-item label="摘要">
                 <pre>
                 {{ info.desc }}
@@ -60,6 +69,27 @@
       }
       return url;
     }
+
+    const dateFormat = (dateStr: string) => {
+        if (!dateStr) return "-";
+        const daysOfWeek = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+        const date = new Date(dateStr);
+
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        const dayOfWeek = daysOfWeek[date.getDay()];
+
+        const hours = date.getHours();
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+
+        // 根据小时数判断上午/下午
+        const period = hours < 12 ? "上午" : "下午";
+        const formattedHour = hours % 12 === 0 ? 12 : hours % 12;
+
+        return `${year}年${month}月${day}日（${dayOfWeek}）${period}${formattedHour} : ${minutes}`;
+    }
+
 </script>
 
 <style lang="less" scoped>
@@ -68,6 +98,34 @@
     width: 70vw;
     max-height: 65vh;
     overflow: auto;
+}
+
+.flex{
+    display:flex;
+}
+
+.email-title{
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.email-label{
+    width:3rem;
+    text-align: justify;
+    text-align-last: justify;
+    margin-right: 1rem;
+}
+
+.email-person{
+    color:  rgb(var(--primary-6));
+}
+
+.mb-1{
+    margin-bottom: 0.5rem;
+}
+
+.mb-2{
+    margin-bottom: 1rem;
 }
 
 ::-webkit-scrollbar {
