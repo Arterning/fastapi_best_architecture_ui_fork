@@ -10,7 +10,7 @@
       @click="goto(itemData)"
     >
       <span class="tag-link">
-        {{ $t(itemData.title) }}
+        {{ $t(itemData.title)}}{{ itemData.appendix? `-${itemData.appendix}`: '' }}
       </span>
       <span
         class="arco-icon-hover arco-tag-icon-hover arco-icon-hover-size-medium arco-tag-close-btn"

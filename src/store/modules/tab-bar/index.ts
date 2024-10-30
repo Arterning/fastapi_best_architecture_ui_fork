@@ -6,10 +6,19 @@ import {
   REDIRECT_ROUTE_NAME,
 } from '@/router/constants';
 import { isString } from '@/utils/is';
+import { querySysDocDetail } from '@/api/doc';
 import { TabBarState, TagProps } from './types';
 
-const formatTag = (route: RouteLocationNormalized): TagProps => {
+
+const formatTag = async (route: RouteLocationNormalized): Promise<TagProps> => {
   const { name, meta, fullPath, query, params } = route;
+
+  let appendix;
+  if(params.id){
+    const res = await querySysDocDetail(Number(params.id));
+    appendix = res.name? res.name: undefined;
+  }
+
   return {
     title: meta.locale || '',
     name: String(name),
@@ -17,6 +26,7 @@ const formatTag = (route: RouteLocationNormalized): TagProps => {
     query,
     params,
     ignoreCache: meta.ignoreCache,
+    appendix
   };
 };
 
@@ -38,9 +48,10 @@ const useAppStore = defineStore('tabBar', {
   },
 
   actions: {
-    updateTabList(route: RouteLocationNormalized) {
+    async updateTabList(route: RouteLocationNormalized) {
       if (BAN_LIST.includes(route.name as string)) return;
-      this.tagList.push(formatTag(route));
+      const tag = await formatTag(route);
+      this.tagList.push(tag);
       if (!route.meta.ignoreCache) {
         this.cacheTabList.add(route.name as string);
       }

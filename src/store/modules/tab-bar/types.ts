@@ -5,6 +5,7 @@ export interface TagProps {
   query?: any;
   params?: any;
   ignoreCache?: boolean;
+  appendix?: string;
 }
 
 export interface TabBarState {
