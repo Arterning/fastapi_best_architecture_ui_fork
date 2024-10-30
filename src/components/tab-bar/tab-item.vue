@@ -6,7 +6,7 @@
   >
     <div
       :class="{ 'link-activated': itemData.fullPath === $route.fullPath }"
-      class="arco-tag arco-tag-size-medium arco-tag-checked "
+      class="arco-tag arco-tag-size-medium arco-tag-checked"
       @click="goto(itemData)"
     >
       <a-tooltip v-if="itemData.appendix" :content="itemData.appendix">
@@ -25,10 +25,10 @@
       </span>
     </div>
     <template #content>
-      <a-doption :disabled="disabledReload" :value="Eaction.reload">
+      <!-- <a-doption :disabled="disabledReload" :value="Eaction.reload">
         <icon-refresh />
         <span>重新加载</span>
-      </a-doption>
+      </a-doption> -->
       <a-doption
         :disabled="disabledCurrent"
         :value="Eaction.current"
@@ -139,10 +139,13 @@
     const copyTagList = [...tagList.value];
     if (value === Eaction.current) {
       tagClose(itemData, index);
+      if(itemData.params.id){
+        docStore.delete(Number(itemData.params.id));
+      }
     } else if (value === Eaction.left) {
       const currentRouteIdx = findCurrentRouteIndex();
       copyTagList.splice(1, props.index - 1);
-
+      docStore.deleteBatch(copyTagList);
       tabBarStore.freshTabList(copyTagList);
       if (currentRouteIdx < index) {
         router.push({ name: itemData.name });
@@ -150,7 +153,7 @@
     } else if (value === Eaction.right) {
       const currentRouteIdx = findCurrentRouteIndex();
       copyTagList.splice(props.index + 1);
-
+      docStore.deleteBatch(copyTagList);
       tabBarStore.freshTabList(copyTagList);
       if (currentRouteIdx > index) {
         router.push({ name: itemData.name });
@@ -159,6 +162,7 @@
       const filterList = tagList.value.filter((el, idx) => {
         return idx === 0 || idx === props.index;
       });
+      docStore.deleteBatch(copyTagList);
       tabBarStore.freshTabList(filterList);
       router.push({ name: itemData.name });
     } else if (value === Eaction.reload) {
@@ -171,6 +175,7 @@
       });
       tabBarStore.addCache(itemData.name);
     } else {
+      docStore.clear();
       tabBarStore.resetTabList();
       router.push({ name: DEFAULT_ROUTE_NAME });
     }

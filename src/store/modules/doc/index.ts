@@ -15,10 +15,17 @@ const useAppStore = defineStore('doc', {
 
   actions: {
     add(doc: Doc){
-      this.docMap.set(doc.id, doc);
+      this.docMap.set(doc.id, doc);  
     },
     delete(id: number){
       this.docMap.delete(id);
+    },
+    deleteBatch(items: any[]){
+      items.forEach((e)=>{
+        if(e.params && e.params.id){
+          this.docMap.delete(Number(e.params.id));
+        }
+      });
     },
     clear() {
       this.docMap.clear();
