@@ -14,35 +14,40 @@
 </template>
 
 <script lang="ts" setup>
-  import { querySysDocDetail, SysDocRes } from '@/api/doc';
+  import { SysDocRes } from '@/api/doc';
   import useLoading from '@/hooks/loading';
-  import { ref } from 'vue';
+  import { onMounted, ref, watchEffect } from 'vue';
   import { useRoute } from 'vue-router';
+  import { useDocStore } from '@/store';
   import GeneralDetail from './general-detail.vue';
   import ExcelDetail from './excel-detail.vue';
 
   const route = useRoute();
+  const docStore = useDocStore();
   const { loading, setLoading } = useLoading(true);
 
   const info = ref<SysDocRes>();
 
   const { id } = route.params;
 
-  const fetchApiDetail = async (pk: number) => {
-      setLoading(true);
-      try {
-        const res = await querySysDocDetail(pk);
-        info.value = res;
-      } catch (error) {
-      // console.log(error);
-      } finally {
-        setLoading(false);
-      }
-  };
+  onMounted(()=>{
+    setLoading(true);
+    const max = 10; // 超时时间
+    const slice = 200; // 每次检查间隔时间
+    const maxNumber = max / slice;
+    let count = 0
+    if(id){
+      const inter = setInterval(()=>{
+        info.value = docStore.getDocMap.get(Number(id));
+        count += 1;
+        if(info.value || count>=maxNumber){
+          setLoading(false);
+          clearInterval(inter);
+        }
+      }, slice)
+    }
+  })
 
-  if(id){
-      fetchApiDetail(Number(id));
-  }
 </script>
 
 <style lang="less" scoped>

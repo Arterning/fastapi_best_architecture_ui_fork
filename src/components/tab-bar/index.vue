@@ -25,11 +25,14 @@
     listenerRouteChange,
     removeRouteListener,
   } from '@/utils/route-listener';
-  import { useAppStore, useTabBarStore } from '@/store';
+  import { useAppStore, useDocStore, useTabBarStore } from '@/store';
+  import { querySysDocDetail } from '@/api/doc';
+  import { Doc } from '@/store/modules/doc/types';
   import tabItem from './tab-item.vue';
 
   const appStore = useAppStore();
   const tabBarStore = useTabBarStore();
+  const docStore = useDocStore();
 
   const affixRef = ref();
   const tagList = computed(() => {
@@ -45,12 +48,18 @@
       affixRef.value.updatePosition();
     }
   );
-  listenerRouteChange((route: RouteLocationNormalized) => {
+  
+  listenerRouteChange( async (route: RouteLocationNormalized) => {
     if (
       !route.meta.noAffix &&
       !tagList.value.some((tag) => tag.fullPath === route.fullPath)
     ) {
-      tabBarStore.updateTabList(route);
+      let res;
+      if(route.params.id){
+        res = await querySysDocDetail(Number(route.params.id));
+        docStore.add(res as Doc);
+      }
+      tabBarStore.updateTabList(route, res?.name);
     }
   }, true);
 

@@ -4,21 +4,26 @@
     trigger="contextMenu"
     @select="actionSelect"
   >
-    <span
+    <div
       :class="{ 'link-activated': itemData.fullPath === $route.fullPath }"
-      class="arco-tag arco-tag-size-medium arco-tag-checked"
+      class="arco-tag arco-tag-size-medium arco-tag-checked "
       @click="goto(itemData)"
     >
-      <span class="tag-link">
-        {{ $t(itemData.title)}}{{ itemData.appendix? `-${itemData.appendix}`: '' }}
-      </span>
+      <a-tooltip v-if="itemData.appendix" :content="itemData.appendix">
+        <div class="tag-link ellipsis">
+          {{ $t(itemData.title)}}-{{itemData.appendix}}
+        </div>
+      </a-tooltip>
+      <div v-else class="tag-link">
+        {{ $t(itemData.title)}}
+      </div>
       <span
         class="arco-icon-hover arco-tag-icon-hover arco-icon-hover-size-medium arco-tag-close-btn"
         @click.stop="tagClose(itemData, index)"
       >
         <icon-close />
       </span>
-    </span>
+    </div>
     <template #content>
       <a-doption :disabled="disabledReload" :value="Eaction.reload">
         <icon-refresh />
@@ -59,9 +64,11 @@
 <script lang="ts" setup>
   import { computed, PropType } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
-  import { useTabBarStore } from '@/store';
+  import { useTabBarStore, useDocStore } from '@/store';
   import type { TagProps } from '@/store/modules/tab-bar/types';
   import { DEFAULT_ROUTE_NAME, REDIRECT_ROUTE_NAME } from '@/router/constants';
+
+  const docStore = useDocStore();
 
   // eslint-disable-next-line no-shadow
   enum Eaction {
@@ -115,6 +122,9 @@
 
   const tagClose = (tag: TagProps, idx: number) => {
     tabBarStore.deleteTag(idx, tag);
+    if(tag.params.id){
+      docStore.delete(Number(tag.params.id));
+    }
     if (props.itemData.fullPath === route.fullPath) {
       const latest = tagList.value[idx - 1]; // 获取队列的前一个tab
       router.push({ name: latest.name, query: latest.query });
@@ -203,5 +213,12 @@
 
   .sperate-line {
     border-bottom: 1px solid var(--color-neutral-3);
+  }
+  .ellipsis{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    max-width: 10rem;
+    // display:block;
   }
 </style>
