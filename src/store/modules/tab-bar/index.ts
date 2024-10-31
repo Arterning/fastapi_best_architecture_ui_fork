@@ -5,8 +5,7 @@ import {
   DEFAULT_ROUTE_NAME,
   REDIRECT_ROUTE_NAME,
 } from '@/router/constants';
-import { isString } from '@/utils/is';
-// import { querySysDocDetail } from '@/api/doc';
+import { isString } from '@/utils/is'
 import { TabBarState, TagProps } from './types';
 
 

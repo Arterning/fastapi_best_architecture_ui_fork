@@ -467,5 +467,19 @@
       white-space: nowrap;
       // display:block;
     }
+    .info-card {
+      border-radius: 20px;
+      border-bottom-width: 2px;
+
+      & > .arco-card-header {
+        height: auto;
+        padding: 20px;
+        border: none;
+      }
+
+      & > .arco-card-body {
+        padding: 0 20px 20px 20px;
+      }
+    }
   </style>
   

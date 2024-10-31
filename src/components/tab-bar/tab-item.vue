@@ -127,7 +127,7 @@
     }
     if (props.itemData.fullPath === route.fullPath) {
       const latest = tagList.value[idx - 1]; // 获取队列的前一个tab
-      router.push({ name: latest.name, query: latest.query });
+      router.push({ name: latest.name, query: latest.query, params: latest.params});
     }
   };
 
@@ -148,7 +148,7 @@
       docStore.deleteBatch(copyTagList);
       tabBarStore.freshTabList(copyTagList);
       if (currentRouteIdx < index) {
-        router.push({ name: itemData.name });
+        router.push({ name: itemData.name, params: itemData.params });
       }
     } else if (value === Eaction.right) {
       const currentRouteIdx = findCurrentRouteIndex();
@@ -156,7 +156,7 @@
       docStore.deleteBatch(copyTagList);
       tabBarStore.freshTabList(copyTagList);
       if (currentRouteIdx > index) {
-        router.push({ name: itemData.name });
+        router.push({ name: itemData.name, params: itemData.params });
       }
     } else if (value === Eaction.others) {
       const filterList = tagList.value.filter((el, idx) => {
@@ -164,7 +164,7 @@
       });
       docStore.deleteBatch(copyTagList);
       tabBarStore.freshTabList(filterList);
-      router.push({ name: itemData.name });
+      router.push({ name: itemData.name, params: itemData.params });
     } else if (value === Eaction.reload) {
       tabBarStore.deleteCache(itemData);
       await router.push({
