@@ -111,6 +111,9 @@
                 {{ $t(`admin.menu.form.status.${record.status}`) }}
               </a-tag>
             </template>
+            <template #created_time="{record}">
+              {{ tableDateFormat(record.created_time) }}
+            </template>
             <template #operate="{ record }">
               <a-space>
                 <a-link @click="NewMenu(record.id)">
@@ -323,6 +326,7 @@
   import IconPicker from '@/components/icon-picker/index.vue';
   import Footer from '@/components/footer/index.vue';
   import useLoading from '@/hooks/loading';
+  import { tableDateFormat } from '@/utils/date';
   import {
     createSysMenu,
     deleteSysMenu,

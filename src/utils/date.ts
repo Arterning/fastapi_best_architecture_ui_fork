@@ -1,4 +1,4 @@
-export function tabelDateFormat(dateStr: string): string {
+export function tableDateFormat(dateStr: string): string {
   if (!dateStr) return "";
   const date = new Date(dateStr);
 

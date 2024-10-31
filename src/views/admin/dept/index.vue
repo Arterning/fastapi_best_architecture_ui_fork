@@ -108,7 +108,7 @@
               </a-tag>
             </template>
             <template #created_time="{ record }">
-              {{ tabelDateFormat(record.created_time) }}
+              {{ tableDateFormat(record.created_time) }}
             </template>
             <template #operate="{ record }">
               <a-space>
@@ -244,7 +244,7 @@
   import { computed, reactive, ref, watch } from 'vue';
   import { useI18n } from 'vue-i18n';
   import Footer from '@/components/footer/index.vue';
-  import { tabelDateFormat } from '@/utils/date';
+  import { tableDateFormat } from '@/utils/date';
   import useLoading from '@/hooks/loading';
   import {
     createSysDept,

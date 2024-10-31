@@ -125,7 +125,7 @@
               {{ record.cost_time.toFixed(3) }}
             </template>
             <template #opera_time="{ record }">
-              {{ tabelDateFormat(record.opera_time) }}
+              {{ tableDateFormat(record.opera_time) }}
             </template>
           </a-table>
         </div>
@@ -144,7 +144,7 @@
   import useLoading from '@/hooks/loading';
   import { Pagination } from '@/types/global';
   import Footer from '@/components/footer/index.vue';
-  import { tabelDateFormat } from '@/utils/date';
+  import { tableDateFormat } from '@/utils/date';
   import { OperaLogParams, OperaLogRes, queryOperaLogList } from '@/api/log';
 
   const generateFormModel = () => {
