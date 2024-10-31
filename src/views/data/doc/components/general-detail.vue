@@ -20,7 +20,7 @@
                 </div>
                 <div class="flex">
                     <div class="email-label">时间</div>
-                    <div>{{ dateFormat(info.email_time) }}</div>
+                    <div>{{ emailDateFormat(info.email_time) }}</div>
                 </div>
                 <a-divider />
             </a-descriptions-item>
@@ -57,6 +57,7 @@
 </template>
 
 <script lang="ts" setup>
+    import { emailDateFormat } from '@/utils/date';
 
     defineProps(['info']);
 

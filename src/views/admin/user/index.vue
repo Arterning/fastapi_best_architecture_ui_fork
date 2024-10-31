@@ -195,6 +195,12 @@
                 @change="changeMultiLogin(record.id)"
               />
             </template>
+            <template #join_time="{ record }">
+              {{ tabelDateFormat(record.join_time) }}
+            </template>
+            <template #last_login_time="{ record }">
+              {{ tabelDateFormat(record.last_login_time) }}
+            </template>
             <template #operate="{ record }">
               <a-space>
                 <a-link @click="EditUser(record.username)">
@@ -458,6 +464,7 @@
   import Footer from '@/components/footer/index.vue';
   import Breadcrumb from '@/components/breadcrumb/index.vue';
   import useLoading from '@/hooks/loading';
+  import { tabelDateFormat } from '@/utils/date';
   import {
     addUser,
     changeUserMulti,
