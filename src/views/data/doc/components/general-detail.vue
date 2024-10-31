@@ -136,12 +136,13 @@
 
 /* 设置滚动条轨道的背景色 */
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: transparent;
 }
 
 /* 设置滚动条滑块的颜色 */
 ::-webkit-scrollbar-thumb {
     background: #999;
+    border-radius: 1rem
 }
 
 /* 设置滚动条滑块在悬停时的颜色 */
