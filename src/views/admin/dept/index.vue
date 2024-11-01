@@ -112,15 +112,21 @@
             </template>
             <template #operate="{ record }">
               <a-space>
-                <a-link @click="NewDept(record.id)">
-                  {{ $t(`admin.menu.columns.new`) }}
-                </a-link>
-                <a-link @click="EditDept(record.id)">
-                  {{ $t(`admin.menu.columns.edit`) }}
-                </a-link>
-                <a-link :status="'danger'" @click="DeleteDept(record.id)">
-                  {{ $t(`admin.menu.columns.delete`) }}
-                </a-link>
+                <a-tooltip :content="$t(`admin.menu.columns.new`)">
+                  <a-link @click="NewDept(record.id)">
+                    <icon-plus style="font-size:16"/>
+                  </a-link>
+                </a-tooltip>
+                <a-tooltip :content="$t(`admin.menu.columns.edit`)">
+                  <a-link @click="EditDept(record.id)">
+                    <icon-edit style="font-size:16"/>
+                  </a-link>
+                </a-tooltip>
+                <a-tooltip :content="$t(`admin.menu.columns.delete`)">
+                  <a-link :status="'danger'" @click="DeleteDept(record.id)">
+                    <icon-delete style="font-size:16"/>
+                  </a-link>
+                </a-tooltip>
               </a-space>
             </template>
           </a-table>

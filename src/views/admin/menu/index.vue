@@ -116,15 +116,21 @@
             </template>
             <template #operate="{ record }">
               <a-space>
-                <a-link @click="NewMenu(record.id)">
-                  {{ $t(`admin.menu.columns.new`) }}
-                </a-link>
-                <a-link @click="EditMenu(record.id)">
-                  {{ $t(`admin.menu.columns.edit`) }}
-                </a-link>
-                <a-link :status="'danger'" @click="DeleteMenu(record.id)">
-                  {{ $t(`admin.menu.columns.delete`) }}
-                </a-link>
+                <a-tooltip :content="$t(`admin.menu.columns.new`)">
+                  <a-link @click="NewMenu(record.id)">
+                    <icon-plus style="font-size:16"/>
+                  </a-link>
+                </a-tooltip>
+                <a-tooltip :content="$t(`admin.menu.columns.edit`)">
+                  <a-link @click="EditMenu(record.id)">
+                    <icon-edit style="font-size:16"/>
+                  </a-link>
+                </a-tooltip>
+                <a-tooltip :content="$t(`admin.menu.columns.delete`)">
+                  <a-link :status="'danger'" @click="DeleteMenu(record.id)">
+                    <icon-delete style="font-size:16"/>
+                  </a-link>
+                </a-tooltip>
               </a-space>
             </template>
           </a-table>
@@ -468,6 +474,7 @@
       dataIndex: 'operate',
       slotName: 'operate',
       align: 'center',
+      fixed: 'right',
       width: 188,
     },
   ]);

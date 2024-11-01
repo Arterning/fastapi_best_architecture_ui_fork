@@ -107,12 +107,16 @@
             </template>
             <template #operate="{ record }">
               <a-space>
-                <a-link @click="EditPerm(record.id)">
-                  {{ $t(`admin.role.columns.perms`) }}
-                </a-link>
-                <a-link @click="EditRole(record.id)">
-                  {{ $t(`admin.role.columns.edit`) }}
-                </a-link>
+                <a-tooltip :content="$t(`admin.role.columns.perms`)">
+                  <a-link @click="EditPerm(record.id)">
+                    <icon-stamp style="font-size:16"/>
+                  </a-link>
+                </a-tooltip>
+                <a-tooltip :content="$t(`admin.role.columns.edit`)">
+                  <a-link @click="EditRole(record.id)">
+                    <icon-edit style="font-size:16"/>
+                  </a-link>
+                </a-tooltip>
               </a-space>
             </template>
           </a-table>

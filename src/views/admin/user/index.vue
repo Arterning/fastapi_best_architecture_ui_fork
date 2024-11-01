@@ -203,12 +203,16 @@
             </template>
             <template #operate="{ record }">
               <a-space>
-                <a-link @click="EditUser(record.username)">
-                  {{ $t(`admin.user.columns.edit`) }}
-                </a-link>
-                <a-link @click="DeleteUser(record.username)">
-                  {{ $t(`admin.user.columns.delete`) }}
-                </a-link>
+                <a-tooltip :content="$t(`admin.user.columns.edit`)">
+                  <a-link @click="EditUser(record.username)">
+                    <icon-edit style="font-size:16"/>
+                  </a-link>
+                </a-tooltip>
+                <a-tooltip :content="$t(`admin.user.columns.delete`)">
+                  <a-link :status="'danger'" @click="DeleteUser(record.username)">
+                    <icon-delete style="font-size:16"/>
+                  </a-link>
+                </a-tooltip>
               </a-space>
             </template>
           </a-table>
