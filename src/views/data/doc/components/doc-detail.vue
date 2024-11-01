@@ -56,3 +56,9 @@
   })
 
 </script>
+
+<style scoped lang="less">
+.content-box{
+  border: none;
+}
+</style>

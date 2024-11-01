@@ -36,4 +36,12 @@ export default {
   'data.doc.columns.method': '请求方式',
   'data.doc.columns.remark': '备注',
   'data.doc.columns.operate': '操作',
+
+  'All': '所有文件',
+  'Media': '媒体',
+  'Text': '文本',
+  'Email': '邮件',
+  'Picture': '图片',
+  'Excel': 'Excel',
+  'PDF': 'PDF',
 };

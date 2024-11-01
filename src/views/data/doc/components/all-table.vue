@@ -1,7 +1,7 @@
 <template>
     <div class="container">
       <a-layout style="padding: 0 18px">
-        <a-card :title="$t('所有文件')" class="general-card">
+        <a-card :title="$t('All')" class="general-card">
           <a-row>
             <a-col :flex="62">
               <a-form
@@ -62,7 +62,7 @@
           <div class="content"> 
             <a-table
               v-model:selected-keys="rowSelectKeys"
-              :bordered="{cell:true}"
+              :bordered="false"
               column-resizable
               :columns="columns"
               :data="renderData"
@@ -85,15 +85,21 @@
               </template>              
               <template #operate="{ record }">
                 <a-space>
-                  <a-link @click="EditApi(record.id)">
-                    {{ $t(`data.doc.columns.edit`) }}
-                  </a-link>
-                  <a-link @click="ViewApi(record.id, record.type)">
-                    {{ $t(`查看`) }}
-                  </a-link>
-                  <a-link @click="HideApi(record.id)">
-                    {{ $t(`隐藏`) }}
-                  </a-link>
+                  <a-tooltip content="修改">
+                    <a-link @click="EditApi(record.id)">
+                      <icon-edit style="font-size:16"/>
+                    </a-link>
+                  </a-tooltip>
+                  <a-tooltip content="查看">
+                    <a-link @click="ViewApi(record.id, record.type)">
+                      <icon-unordered-list  style="font-size:16"/>
+                    </a-link>
+                  </a-tooltip>                  
+                  <a-tooltip content="隐藏">
+                    <a-link @click="HideApi(record.id)">
+                      <icon-eye-invisible  style="font-size:16"/>
+                    </a-link>
+                  </a-tooltip>
                 </a-space>
               </template>
             </a-table>
@@ -287,6 +293,7 @@
         slotName: 'index',
         ellipsis: true,
         tooltip: true,
+        width: 100
       },
       {
         title: t('data.doc.columns.name'),
@@ -299,11 +306,13 @@
         dataIndex: 'type',
         slotName: 'type',
         ellipsis: true,
+        width: 100,
       },
       {
         title: t('data.doc.columns.operate'),
         dataIndex: 'operate',
         slotName: 'operate',
+        width: 150,
         align: 'center',
       },
     ]);
@@ -458,6 +467,7 @@
   </script>
   
   <style lang="less" scoped>
+
     .content {
       padding-top: 20px;
     }
@@ -465,7 +475,7 @@
       text-overflow: ellipsis;
       overflow: hidden;
       white-space: nowrap;
-      // display:block;
+      display:block;
     }
     .info-card {
       border-radius: 20px;

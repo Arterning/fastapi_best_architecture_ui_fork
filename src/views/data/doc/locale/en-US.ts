@@ -36,4 +36,12 @@ export default {
   'data.doc.columns.method': 'Method',
   'data.doc.columns.remark': 'Remark',
   'data.doc.columns.operate': 'Operate',
+
+  'All': 'All Files',
+  'Media': 'Media',
+  'Text': 'Text',
+  'Email': 'Email',
+  'Excel': 'Excel',
+  'Picture': 'Picture',
+  'PDF': 'PDF',
 };

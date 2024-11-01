@@ -94,15 +94,21 @@
               </template> 
               <template #operate="{ record }">
                 <a-space>
-                  <a-link @click="EditApi(record.id)">
-                    {{ $t(`data.doc.columns.edit`) }}
-                  </a-link>
-                  <a-link @click="ViewApi(record.id)">
-                    {{ $t(`查看`) }}
-                  </a-link>
-                  <a-link @click="HideApi(record.id)">
-                    {{ $t(`隐藏`) }}
-                  </a-link>
+                  <a-tooltip content="修改">
+                    <a-link @click="EditApi(record.id)">
+                      <icon-edit style="font-size:16"/>
+                    </a-link>
+                  </a-tooltip>
+                  <a-tooltip content="查看">
+                    <a-link @click="ViewApi(record.id)">
+                      <icon-unordered-list  style="font-size:16"/>
+                    </a-link>
+                  </a-tooltip>                  
+                  <a-tooltip content="隐藏">
+                    <a-link @click="HideApi(record.id)">
+                      <icon-eye-invisible  style="font-size:16"/>
+                    </a-link>
+                  </a-tooltip>
                 </a-space>
               </template>
             </a-table>
@@ -290,13 +296,12 @@
         slotName: 'index',
         ellipsis: true,
         tooltip: true,
-        width: 50,
+        width: 100,
       },
       {
         title: t('data.doc.columns.name'),
         dataIndex: 'name',
         slotName: 'name',
-        width: 500,
         ellipsis: true,
       },
       {

@@ -2,25 +2,46 @@
   <a-layout style="padding: 0 18px">
     <Breadcrumb />
     <a-tabs default-active-key="1">
-      <a-tab-pane key="1" title="所有">
+      <a-tab-pane key="1">
+        <template #title>
+          <icon-layers /> 所有
+        </template>
         <AllTable />
       </a-tab-pane>
-      <a-tab-pane key="2" title="图片">
+      <a-tab-pane key="2">
+        <template #title>
+          <icon-file-image /> 图片
+        </template>
         <PictureTable />
       </a-tab-pane>
-      <a-tab-pane key="3" title="媒体">
+      <a-tab-pane key="3">
+        <template #title>
+          <icon-file-video /> 媒体
+        </template>
         <MediaTable />
       </a-tab-pane>
-      <a-tab-pane key="4" title="文本">
+      <a-tab-pane key="4">
+        <template #title>
+          <icon-file /> 文本
+        </template>
         <TextTable />
       </a-tab-pane>
-      <a-tab-pane key="5" title="邮件">
+      <a-tab-pane key="5">
+        <template #title>
+          <icon-email /> 邮件
+        </template>
         <EmailTable />
       </a-tab-pane>
-      <a-tab-pane key="6" title="Excel">
+      <a-tab-pane key="6">
+        <template #title>
+          <icon-nav /> Excel
+        </template>
         <ExcelTable />
       </a-tab-pane>
-      <a-tab-pane key="7" title="PDF">
+      <a-tab-pane key="7">
+        <template #title>
+          <icon-file-pdf /> PDF
+        </template>
         <PDFTable />
       </a-tab-pane>
     </a-tabs>
