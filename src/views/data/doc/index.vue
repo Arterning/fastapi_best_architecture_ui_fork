@@ -1,5 +1,5 @@
 <template>
-  <a-layout style="padding: 0 18px">
+  <a-layout class="flex-layout">
     <Breadcrumb />
     <a-tabs default-active-key="1">
       <a-tab-pane key="1">
@@ -45,6 +45,7 @@
         <PDFTable />
       </a-tab-pane>
     </a-tabs>
+    <Footer />
   </a-layout>
 </template>
 
@@ -56,5 +57,6 @@ import MediaTable from '@/views/data/doc/components/media-table.vue'
 import TextTable from '@/views/data/doc/components/text-table.vue'
 import EmailTable from '@/views/data/doc/components/email-table.vue'
 import ExcelTable from '@/views/data/doc/components/excel-table.vue'
+import Footer from '@/components/footer/index.vue';
 </script>
   

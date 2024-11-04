@@ -1,222 +1,218 @@
 <template>
-  <div class="container">
-    <a-layout style="padding: 0 18px">
-      <Breadcrumb />
-      <a-card :title="$t('menu.admin.sysApi')" class="general-card">
-        <a-row>
-          <a-col :flex="62">
-            <a-form
-              :auto-label-width="true"
-              :model="formModel"
-              label-align="right"
+  <a-layout class="flex-layout">
+    <Breadcrumb />
+    <a-card :title="$t('menu.admin.sysApi')" class="general-card">
+      <a-row>
+        <a-col :flex="62">
+          <a-form
+            :auto-label-width="true"
+            :model="formModel"
+            label-align="right"
+          >
+            <a-row :gutter="16">
+              <a-col :span="8">
+                <a-form-item :label="$t('admin.api.form.name')" field="name">
+                  <a-input
+                    v-model="formModel.name"
+                    :placeholder="$t('admin.api.form.name.placeholder')"
+                  />
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item :label="$t('admin.api.form.path')" field="path">
+                  <a-input
+                    v-model="formModel.path"
+                    :placeholder="$t('admin.api.form.path.placeholder')"
+                  />
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item
+                  :label="$t('admin.api.form.method')"
+                  field="method"
+                >
+                  <a-select
+                    v-model="formModel.method"
+                    :allow-clear="true"
+                    :on-clear="resetMethod"
+                    :options="selectMethodOptions"
+                    :placeholder="$t('admin.api.form.method.placeholder')"
+                  />
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </a-form>
+        </a-col>
+        <a-divider direction="vertical" style="height: 30px" />
+        <a-col :span="6">
+          <a-space :size="'medium'" direction="horizontal">
+            <a-button type="primary" @click="search">
+              <template #icon>
+                <icon-search />
+              </template>
+              {{ $t('admin.api.form.search') }}
+            </a-button>
+            <a-button @click="resetSelect">
+              <template #icon>
+                <icon-refresh />
+              </template>
+              {{ $t('admin.api.form.reset') }}
+            </a-button>
+          </a-space>
+        </a-col>
+      </a-row>
+      <a-divider />
+      <a-space :size="'medium'">
+        <a-button type="primary" @click="NewApi()">
+          <template #icon>
+            <icon-plus />
+          </template>
+          {{ $t('admin.api.button.create') }}
+        </a-button>
+        <a-button
+          :disabled="deleteButtonStatus()"
+          status="danger"
+          @click="DeleteApi"
+        >
+          <template #icon>
+            <icon-minus />
+          </template>
+          {{ $t('admin.api.button.delete') }}
+        </a-button>
+      </a-space>
+      <div class="content">
+        <a-table
+          v-model:selected-keys="rowSelectKeys"
+          :bordered="false"
+          :columns="columns"
+          :data="renderData"
+          :loading="loading"
+          :pagination="pagination"
+          :row-selection="rowSelection"
+          :size="'medium'"
+          row-key="id"
+          @page-change="onPageChange"
+          @page-size-change="onPageSizeChange"
+        >
+          <template #index="{ rowIndex }">
+            {{ rowIndex + 1 }}
+          </template>
+          <template #method="{ record }">
+            <a-tag
+              v-if="record.method === 'GET'"
+              :color="`arcoblue`"
+              bordered
             >
-              <a-row :gutter="16">
-                <a-col :span="8">
-                  <a-form-item :label="$t('admin.api.form.name')" field="name">
-                    <a-input
-                      v-model="formModel.name"
-                      :placeholder="$t('admin.api.form.name.placeholder')"
-                    />
-                  </a-form-item>
-                </a-col>
-                <a-col :span="8">
-                  <a-form-item :label="$t('admin.api.form.path')" field="path">
-                    <a-input
-                      v-model="formModel.path"
-                      :placeholder="$t('admin.api.form.path.placeholder')"
-                    />
-                  </a-form-item>
-                </a-col>
-                <a-col :span="8">
-                  <a-form-item
-                    :label="$t('admin.api.form.method')"
-                    field="method"
-                  >
-                    <a-select
-                      v-model="formModel.method"
-                      :allow-clear="true"
-                      :on-clear="resetMethod"
-                      :options="selectMethodOptions"
-                      :placeholder="$t('admin.api.form.method.placeholder')"
-                    />
-                  </a-form-item>
-                </a-col>
-              </a-row>
-            </a-form>
-          </a-col>
-          <a-divider direction="vertical" style="height: 30px" />
-          <a-col :span="6">
-            <a-space :size="'medium'" direction="horizontal">
-              <a-button type="primary" @click="search">
-                <template #icon>
-                  <icon-search />
-                </template>
-                {{ $t('admin.api.form.search') }}
-              </a-button>
-              <a-button @click="resetSelect">
-                <template #icon>
-                  <icon-refresh />
-                </template>
-                {{ $t('admin.api.form.reset') }}
-              </a-button>
-            </a-space>
-          </a-col>
-        </a-row>
-        <a-divider />
-        <a-space :size="'medium'">
-          <a-button type="primary" @click="NewApi()">
-            <template #icon>
-              <icon-plus />
-            </template>
-            {{ $t('admin.api.button.create') }}
-          </a-button>
-          <a-button
-            :disabled="deleteButtonStatus()"
-            status="danger"
-            @click="DeleteApi"
-          >
-            <template #icon>
-              <icon-minus />
-            </template>
-            {{ $t('admin.api.button.delete') }}
-          </a-button>
-        </a-space>
-        <div class="content">
-          <a-table
-            v-model:selected-keys="rowSelectKeys"
-            :bordered="false"
-            :columns="columns"
-            :data="renderData"
-            :loading="loading"
-            :pagination="pagination"
-            :row-selection="rowSelection"
-            :size="'medium'"
-            row-key="id"
-            @page-change="onPageChange"
-            @page-size-change="onPageSizeChange"
-          >
-            <template #index="{ rowIndex }">
-              {{ rowIndex + 1 }}
-            </template>
-            <template #method="{ record }">
-              <a-tag
-                v-if="record.method === 'GET'"
-                :color="`arcoblue`"
-                bordered
-              >
-                {{ record.method }}
-              </a-tag>
-              <a-tag
-                v-else-if="record.method === 'POST'"
-                :color="`green`"
-                bordered
-              >
-                {{ record.method }}
-              </a-tag>
-              <a-tag
-                v-else-if="record.method === 'DELETE'"
-                :color="`red`"
-                bordered
-              >
-                {{ record.method }}
-              </a-tag>
-              <a-tag v-else :color="`cyan`" bordered>
-                {{ record.method }}
-              </a-tag>
-            </template>
-            <template #operate="{ record }">
-              <a-space>
-                <a-link @click="EditApi(record.id)">
-                  {{ $t(`admin.api.columns.edit`) }}
-                </a-link>
-              </a-space>
-            </template>
-          </a-table>
-        </div>
-        <div class="content-modal">
-          <a-modal
-            :closable="false"
-            :on-before-ok="beforeSubmit"
-            :title="drawerTitle"
-            :visible="openNewOrEdit"
-            :width="550"
-            @cancel="cancelReq"
-            @ok="submitNewOrEdit"
-          >
-            <a-form ref="formRef" :model="form">
-              <a-form-item
-                :feedback="true"
-                :label="$t('admin.api.columns.name')"
-                :rules="[
-                  { required: true, message: $t('admin.api.form.name.help') },
-                ]"
-                field="name"
-              >
-                <a-input
-                  v-model="form.name"
-                  :placeholder="$t('admin.api.form.name.placeholder')"
-                ></a-input>
-              </a-form-item>
-              <a-form-item
-                :feedback="true"
-                :label="$t('admin.api.columns.path')"
-                :rules="[
-                  { required: true, message: $t('admin.api.form.path.help') },
-                ]"
-                field="path"
-              >
-                <a-input
-                  v-model="form.path"
-                  :placeholder="$t('admin.api.form.path.placeholder')"
-                ></a-input>
-              </a-form-item>
-              <a-form-item
-                :feedback="true"
-                :label="$t('admin.api.columns.method')"
-                :rules="[
-                  { required: true, message: $t('admin.api.form.method.help') },
-                ]"
-                field="method"
-              >
-                <a-select
-                  v-model="form.method"
-                  :allow-clear="true"
-                  :on-clear="resetMethod"
-                  :options="selectMethodOptions"
-                  :placeholder="$t('admin.api.form.method.help')"
-                />
-              </a-form-item>
-              <a-form-item
-                :label="$t('admin.api.columns.remark')"
-                field="remark"
-              >
-                <a-textarea
-                  v-model="form.remark"
-                  :placeholder="$t('admin.api.form.remark.placeholder')"
-                ></a-textarea>
-              </a-form-item>
-            </a-form>
-          </a-modal>
-          <a-modal
-            :closable="false"
-            :title="`${$t('modal.title.tips')}`"
-            :visible="openDelete"
-            :width="360"
-            @cancel="cancelReq"
-            @ok="submitDelete"
-          >
+              {{ record.method }}
+            </a-tag>
+            <a-tag
+              v-else-if="record.method === 'POST'"
+              :color="`green`"
+              bordered
+            >
+              {{ record.method }}
+            </a-tag>
+            <a-tag
+              v-else-if="record.method === 'DELETE'"
+              :color="`red`"
+              bordered
+            >
+              {{ record.method }}
+            </a-tag>
+            <a-tag v-else :color="`cyan`" bordered>
+              {{ record.method }}
+            </a-tag>
+          </template>
+          <template #operate="{ record }">
             <a-space>
-              <icon-exclamation-circle-fill size="24" style="color: #e6a23c" />
-              {{ $t('modal.title.tips.delete') }}
+              <a-link @click="EditApi(record.id)">
+                {{ $t(`admin.api.columns.edit`) }}
+              </a-link>
             </a-space>
-          </a-modal>
-        </div>
-      </a-card>
-    </a-layout>
-  </div>
-  <div class="footer">
+          </template>
+        </a-table>
+      </div>
+      <div class="content-modal">
+        <a-modal
+          :closable="false"
+          :on-before-ok="beforeSubmit"
+          :title="drawerTitle"
+          :visible="openNewOrEdit"
+          :width="550"
+          @cancel="cancelReq"
+          @ok="submitNewOrEdit"
+        >
+          <a-form ref="formRef" :model="form">
+            <a-form-item
+              :feedback="true"
+              :label="$t('admin.api.columns.name')"
+              :rules="[
+                { required: true, message: $t('admin.api.form.name.help') },
+              ]"
+              field="name"
+            >
+              <a-input
+                v-model="form.name"
+                :placeholder="$t('admin.api.form.name.placeholder')"
+              ></a-input>
+            </a-form-item>
+            <a-form-item
+              :feedback="true"
+              :label="$t('admin.api.columns.path')"
+              :rules="[
+                { required: true, message: $t('admin.api.form.path.help') },
+              ]"
+              field="path"
+            >
+              <a-input
+                v-model="form.path"
+                :placeholder="$t('admin.api.form.path.placeholder')"
+              ></a-input>
+            </a-form-item>
+            <a-form-item
+              :feedback="true"
+              :label="$t('admin.api.columns.method')"
+              :rules="[
+                { required: true, message: $t('admin.api.form.method.help') },
+              ]"
+              field="method"
+            >
+              <a-select
+                v-model="form.method"
+                :allow-clear="true"
+                :on-clear="resetMethod"
+                :options="selectMethodOptions"
+                :placeholder="$t('admin.api.form.method.help')"
+              />
+            </a-form-item>
+            <a-form-item
+              :label="$t('admin.api.columns.remark')"
+              field="remark"
+            >
+              <a-textarea
+                v-model="form.remark"
+                :placeholder="$t('admin.api.form.remark.placeholder')"
+              ></a-textarea>
+            </a-form-item>
+          </a-form>
+        </a-modal>
+        <a-modal
+          :closable="false"
+          :title="`${$t('modal.title.tips')}`"
+          :visible="openDelete"
+          :width="360"
+          @cancel="cancelReq"
+          @ok="submitDelete"
+        >
+          <a-space>
+            <icon-exclamation-circle-fill size="24" style="color: #e6a23c" />
+            {{ $t('modal.title.tips.delete') }}
+          </a-space>
+        </a-modal>
+      </div>
+    </a-card>
     <Footer />
-  </div>
+  </a-layout>
 </template>
 
 <script lang="ts" setup>

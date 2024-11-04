@@ -1,14 +1,12 @@
 <template>
-  <div class="container">
+  <div class="container flex-layout">
     <div class="left-side">
       <div class="panel">
         <Banner />
         <DataPanel />
       </div>
     </div>
-    <div class="footer">
-      <Footer />
-    </div>
+    <Footer />
   </div>
 </template>
 
@@ -26,7 +24,7 @@
 
 <style lang="less" scoped>
   .container {
-    background-color: var(--color-fill-2);
+    background-color: var(--color-fill-0);
     padding: 16px 20px;
     padding-bottom: 0;
   }

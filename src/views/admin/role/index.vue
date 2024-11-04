@@ -1,283 +1,279 @@
 <template>
-  <div class="container">
-    <a-layout style="padding: 0 18px">
-      <Breadcrumb />
-      <a-card :title="$t('menu.admin.sysRole')" class="general-card">
-        <a-row>
-          <a-col :span="12">
-            <a-form
-              :auto-label-width="true"
-              :label-col-props="{ span: 6 }"
-              :model="formModel"
-              label-align="right"
-            >
-              <a-row>
-                <a-col :span="12">
-                  <a-form-item :label="$t('admin.role.form.name')" field="name">
-                    <a-input
-                      v-model="formModel.name"
-                      :placeholder="$t('admin.role.form.name.placeholder')"
-                    />
-                  </a-form-item>
-                </a-col>
-                <a-col :span="12">
-                  <a-form-item
-                    :label="$t('admin.role.form.status')"
-                    field="status"
-                  >
-                    <a-select
-                      v-model="formModel.status"
-                      :options="statusOptions"
-                      :placeholder="$t('admin.role.form.selectDefault')"
-                      allow-clear
-                      @clear="resetStatus"
-                    />
-                  </a-form-item>
-                </a-col>
-              </a-row>
-            </a-form>
-          </a-col>
-          <a-divider direction="vertical" style="height: 30px" />
-          <a-col :span="8">
-            <a-space :size="'medium'" direction="horizontal">
-              <a-button type="primary" @click="search">
-                <template #icon>
-                  <icon-search />
-                </template>
-                {{ $t('admin.role.form.search') }}
-              </a-button>
-              <a-button @click="resetSelect">
-                <template #icon>
-                  <icon-refresh />
-                </template>
-                {{ $t('admin.role.form.reset') }}
-              </a-button>
-            </a-space>
-          </a-col>
-        </a-row>
-        <a-divider />
-        <a-space :size="'medium'">
-          <a-button type="primary" @click="NewRole">
-            <template #icon>
-              <icon-plus />
-            </template>
-            {{ $t('admin.role.button.create') }}
-          </a-button>
-          <a-button
-            :disabled="deleteButtonStatus()"
-            status="danger"
-            @click="DeleteRole"
+  <a-layout class="flex-layout">
+    <Breadcrumb />
+    <a-card :title="$t('menu.admin.sysRole')" class="general-card">
+      <a-row>
+        <a-col :span="12">
+          <a-form
+            :auto-label-width="true"
+            :label-col-props="{ span: 6 }"
+            :model="formModel"
+            label-align="right"
           >
-            <template #icon>
-              <icon-minus />
-            </template>
-            {{ $t('admin.role.button.delete') }}
-          </a-button>
-        </a-space>
-        <a-alert :type="'warning'" style="margin-top: 20px">
-          {{ $t('admin.role.alert.data_scope') }}
-        </a-alert>
-        <div class="content">
-          <a-table
-            v-model:selected-keys="rowSelectKeys"
-            :bordered="false"
-            :columns="columns"
-            :data="renderData"
-            :loading="loading"
-            :pagination="pagination"
-            :row-selection="rowSelection"
-            :size="'medium'"
-            row-key="id"
-            @page-change="onPageChange"
-            @page-size-change="onPageSizeChange"
-          >
-            <template #index="{ rowIndex }">
-              {{ rowIndex + 1 }}
-            </template>
-            <template #status="{ record }">
-              <a-tag v-if="record.status === 1" :color="`green`" bordered>
-                {{ $t(`admin.menu.form.status.${record.status}`) }}
-              </a-tag>
-              <a-tag v-else :color="`red`" bordered>
-                {{ $t(`admin.menu.form.status.${record.status}`) }}
-              </a-tag>
-            </template>
-            <template #data_scope="{ record }">
-              {{ dataScopeText(record.data_scope) }}
-            </template>
-            <template #operate="{ record }">
-              <a-space>
-                <a-tooltip :content="$t(`admin.role.columns.perms`)">
-                  <a-link @click="EditPerm(record.id)">
-                    <icon-stamp style="font-size:16"/>
-                  </a-link>
-                </a-tooltip>
-                <a-tooltip :content="$t(`admin.role.columns.edit`)">
-                  <a-link @click="EditRole(record.id)">
-                    <icon-edit style="font-size:16"/>
-                  </a-link>
-                </a-tooltip>
-              </a-space>
-            </template>
-          </a-table>
-        </div>
-        <div class="content-modal">
-          <a-modal
-            :closable="false"
-            :on-before-ok="beforeSubmit"
-            :title="drawerTitle"
-            :visible="openNewOrEdit"
-            :width="550"
-            @cancel="cancelReq"
-            @ok="submitNewOrEdit"
-          >
-            <a-form ref="formRef" :model="form">
-              <a-form-item
-                :label="$t('admin.role.columns.name')"
-                :rules="[
-                  {
-                    required: true,
-                    message: $t('admin.role.form.name.help'),
-                  },
-                ]"
-                field="name"
-              >
-                <a-input v-model="form.name"></a-input>
-              </a-form-item>
-              <a-form-item
-                :label="$t('admin.role.columns.data_scope')"
-                :rules="[
-                  {
-                    required: true,
-                    message: $t('admin.role.form.data_scope.help'),
-                  },
-                ]"
-                field="data_scope"
-              >
-                <a-select
-                  v-model="form.data_scope"
-                  :options="dataScopeOptions"
-                ></a-select>
-              </a-form-item>
-              <a-form-item
-                :label="$t('admin.role.columns.status')"
-                field="status"
-              >
-                <a-switch
-                  v-model="switchStatus"
-                  :checked-text="$t('switch.open')"
-                  :unchecked-text="$t('switch.close')"
-                ></a-switch>
-              </a-form-item>
-              <a-form-item
-                :label="$t('admin.role.columns.remark')"
-                field="remark"
-              >
-                <a-textarea v-model="form.remark"></a-textarea>
-              </a-form-item>
-            </a-form>
-          </a-modal>
-          <a-modal
-            :closable="false"
-            :title="`${$t('modal.title.tips')}`"
-            :visible="openDelete"
-            @cancel="cancelReq"
-            @ok="submitDeleteRole"
-          >
+            <a-row>
+              <a-col :span="12">
+                <a-form-item :label="$t('admin.role.form.name')" field="name">
+                  <a-input
+                    v-model="formModel.name"
+                    :placeholder="$t('admin.role.form.name.placeholder')"
+                  />
+                </a-form-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-item
+                  :label="$t('admin.role.form.status')"
+                  field="status"
+                >
+                  <a-select
+                    v-model="formModel.status"
+                    :options="statusOptions"
+                    :placeholder="$t('admin.role.form.selectDefault')"
+                    allow-clear
+                    @clear="resetStatus"
+                  />
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </a-form>
+        </a-col>
+        <a-divider direction="vertical" style="height: 30px" />
+        <a-col :span="8">
+          <a-space :size="'medium'" direction="horizontal">
+            <a-button type="primary" @click="search">
+              <template #icon>
+                <icon-search />
+              </template>
+              {{ $t('admin.role.form.search') }}
+            </a-button>
+            <a-button @click="resetSelect">
+              <template #icon>
+                <icon-refresh />
+              </template>
+              {{ $t('admin.role.form.reset') }}
+            </a-button>
+          </a-space>
+        </a-col>
+      </a-row>
+      <a-divider />
+      <a-space :size="'medium'">
+        <a-button type="primary" @click="NewRole">
+          <template #icon>
+            <icon-plus />
+          </template>
+          {{ $t('admin.role.button.create') }}
+        </a-button>
+        <a-button
+          :disabled="deleteButtonStatus()"
+          status="danger"
+          @click="DeleteRole"
+        >
+          <template #icon>
+            <icon-minus />
+          </template>
+          {{ $t('admin.role.button.delete') }}
+        </a-button>
+      </a-space>
+      <a-alert :type="'warning'" style="margin-top: 20px">
+        {{ $t('admin.role.alert.data_scope') }}
+      </a-alert>
+      <div class="content">
+        <a-table
+          v-model:selected-keys="rowSelectKeys"
+          :bordered="false"
+          :columns="columns"
+          :data="renderData"
+          :loading="loading"
+          :pagination="pagination"
+          :row-selection="rowSelection"
+          :size="'medium'"
+          row-key="id"
+          @page-change="onPageChange"
+          @page-size-change="onPageSizeChange"
+        >
+          <template #index="{ rowIndex }">
+            {{ rowIndex + 1 }}
+          </template>
+          <template #status="{ record }">
+            <a-tag v-if="record.status === 1" :color="`green`" bordered>
+              {{ $t(`admin.menu.form.status.${record.status}`) }}
+            </a-tag>
+            <a-tag v-else :color="`red`" bordered>
+              {{ $t(`admin.menu.form.status.${record.status}`) }}
+            </a-tag>
+          </template>
+          <template #data_scope="{ record }">
+            {{ dataScopeText(record.data_scope) }}
+          </template>
+          <template #operate="{ record }">
             <a-space>
-              <icon-exclamation-circle-fill size="24" style="color: #e6a23c" />
-              {{ $t('admin.role.modal.delete') }}
+              <a-tooltip :content="$t(`admin.role.columns.perms`)">
+                <a-link @click="EditPerm(record.id)">
+                  <icon-stamp style="font-size:16"/>
+                </a-link>
+              </a-tooltip>
+              <a-tooltip :content="$t(`admin.role.columns.edit`)">
+                <a-link @click="EditRole(record.id)">
+                  <icon-edit style="font-size:16"/>
+                </a-link>
+              </a-tooltip>
             </a-space>
-          </a-modal>
-          <a-drawer
-            :closable="false"
-            :header="false"
-            :title="drawerTitle"
-            :visible="openEditPerm"
-            :width="688"
-            @cancel="cancelReq"
-            @ok="submitPerms"
-          >
-            <a-tabs
-              v-model:active-key="activePerm"
-              :animation="true"
-              :justify="true"
-              :type="'card-gutter'"
+          </template>
+        </a-table>
+      </div>
+      <div class="content-modal">
+        <a-modal
+          :closable="false"
+          :on-before-ok="beforeSubmit"
+          :title="drawerTitle"
+          :visible="openNewOrEdit"
+          :width="550"
+          @cancel="cancelReq"
+          @ok="submitNewOrEdit"
+        >
+          <a-form ref="formRef" :model="form">
+            <a-form-item
+              :label="$t('admin.role.columns.name')"
+              :rules="[
+                {
+                  required: true,
+                  message: $t('admin.role.form.name.help'),
+                },
+              ]"
+              field="name"
             >
-              <a-tab-pane
-                key="menu"
-                :closable="false"
-                :title="$t('admin.role.drawer.menu')"
-              >
-                <a-space :size="'medium'" style="margin: 10px 0 20px 20px">
-                  <a-button
-                    :shape="'round'"
-                    :type="'outline'"
-                    @click="checkMenu"
-                  >
-                    {{ $t('admin.role.drawer.menu.button.select') }}
-                  </a-button>
-                  <a-button :shape="'round'" :type="'outline'" @click="expand">
-                    {{ $t('admin.role.drawer.menu.button.collapse') }}
-                  </a-button>
-                  <a-input-search
-                    v-model="searchKey"
-                    :placeholder="
-                      $t('admin.role.drawer.menu.input.placeholder')
-                    "
-                    :style="{ width: '360px' }"
-                  />
-                </a-space>
-                <a-scrollbar style="height: 690px; overflow: auto">
-                  <a-tree
-                    ref="menuTreeDataRef"
-                    v-model:checked-keys="menuCheckedKeys"
-                    :checkable="true"
-                    :data="filterMenuTreeData"
-                    :field-names="selectMenuTreeFieldNames"
-                    style="margin-left: 20px"
-                  ></a-tree>
-                </a-scrollbar>
-              </a-tab-pane>
-              <a-tab-pane
-                key="api"
-                :closable="false"
-                :title="$t('admin.role.drawer.api')"
-              >
-                <a-space :size="'medium'" style="margin: 10px 0 20px 20px">
-                  <a-button
-                    :shape="'round'"
-                    :type="'outline'"
-                    @click="checkApi"
-                  >
-                    {{ $t('admin.role.drawer.menu.button.select') }}
-                  </a-button>
-                  <a-input-search
-                    v-model="searchKey"
-                    :placeholder="$t('admin.role.drawer.api.input.placeholder')"
-                    :style="{ width: '360px' }"
-                  />
-                </a-space>
-                <a-scrollbar style="height: 690px; overflow: auto">
-                  <a-tree
-                    ref="apiDataRef"
-                    v-model:checked-keys="apiCheckedKeys"
-                    :checkable="true"
-                    :data="filterApiData"
-                    :field-names="selectApiFieldNames"
-                    style="margin-left: 10px"
-                  ></a-tree>
-                </a-scrollbar>
-              </a-tab-pane>
-            </a-tabs>
-          </a-drawer>
-        </div>
-      </a-card>
-    </a-layout>
-  </div>
-  <div class="footer">
+              <a-input v-model="form.name"></a-input>
+            </a-form-item>
+            <a-form-item
+              :label="$t('admin.role.columns.data_scope')"
+              :rules="[
+                {
+                  required: true,
+                  message: $t('admin.role.form.data_scope.help'),
+                },
+              ]"
+              field="data_scope"
+            >
+              <a-select
+                v-model="form.data_scope"
+                :options="dataScopeOptions"
+              ></a-select>
+            </a-form-item>
+            <a-form-item
+              :label="$t('admin.role.columns.status')"
+              field="status"
+            >
+              <a-switch
+                v-model="switchStatus"
+                :checked-text="$t('switch.open')"
+                :unchecked-text="$t('switch.close')"
+              ></a-switch>
+            </a-form-item>
+            <a-form-item
+              :label="$t('admin.role.columns.remark')"
+              field="remark"
+            >
+              <a-textarea v-model="form.remark"></a-textarea>
+            </a-form-item>
+          </a-form>
+        </a-modal>
+        <a-modal
+          :closable="false"
+          :title="`${$t('modal.title.tips')}`"
+          :visible="openDelete"
+          @cancel="cancelReq"
+          @ok="submitDeleteRole"
+        >
+          <a-space>
+            <icon-exclamation-circle-fill size="24" style="color: #e6a23c" />
+            {{ $t('admin.role.modal.delete') }}
+          </a-space>
+        </a-modal>
+        <a-drawer
+          :closable="false"
+          :header="false"
+          :title="drawerTitle"
+          :visible="openEditPerm"
+          :width="688"
+          @cancel="cancelReq"
+          @ok="submitPerms"
+        >
+          <a-tabs
+            v-model:active-key="activePerm"
+            :animation="true"
+            :justify="true"
+            :type="'card-gutter'"
+          >
+            <a-tab-pane
+              key="menu"
+              :closable="false"
+              :title="$t('admin.role.drawer.menu')"
+            >
+              <a-space :size="'medium'" style="margin: 10px 0 20px 20px">
+                <a-button
+                  :shape="'round'"
+                  :type="'outline'"
+                  @click="checkMenu"
+                >
+                  {{ $t('admin.role.drawer.menu.button.select') }}
+                </a-button>
+                <a-button :shape="'round'" :type="'outline'" @click="expand">
+                  {{ $t('admin.role.drawer.menu.button.collapse') }}
+                </a-button>
+                <a-input-search
+                  v-model="searchKey"
+                  :placeholder="
+                    $t('admin.role.drawer.menu.input.placeholder')
+                  "
+                  :style="{ width: '360px' }"
+                />
+              </a-space>
+              <a-scrollbar style="height: 690px; overflow: auto">
+                <a-tree
+                  ref="menuTreeDataRef"
+                  v-model:checked-keys="menuCheckedKeys"
+                  :checkable="true"
+                  :data="filterMenuTreeData"
+                  :field-names="selectMenuTreeFieldNames"
+                  style="margin-left: 20px"
+                ></a-tree>
+              </a-scrollbar>
+            </a-tab-pane>
+            <a-tab-pane
+              key="api"
+              :closable="false"
+              :title="$t('admin.role.drawer.api')"
+            >
+              <a-space :size="'medium'" style="margin: 10px 0 20px 20px">
+                <a-button
+                  :shape="'round'"
+                  :type="'outline'"
+                  @click="checkApi"
+                >
+                  {{ $t('admin.role.drawer.menu.button.select') }}
+                </a-button>
+                <a-input-search
+                  v-model="searchKey"
+                  :placeholder="$t('admin.role.drawer.api.input.placeholder')"
+                  :style="{ width: '360px' }"
+                />
+              </a-space>
+              <a-scrollbar style="height: 690px; overflow: auto">
+                <a-tree
+                  ref="apiDataRef"
+                  v-model:checked-keys="apiCheckedKeys"
+                  :checkable="true"
+                  :data="filterApiData"
+                  :field-names="selectApiFieldNames"
+                  style="margin-left: 10px"
+                ></a-tree>
+              </a-scrollbar>
+            </a-tab-pane>
+          </a-tabs>
+        </a-drawer>
+      </div>
+    </a-card>
     <Footer />
-  </div>
+  </a-layout>
 </template>
 
 <script lang="ts" setup>

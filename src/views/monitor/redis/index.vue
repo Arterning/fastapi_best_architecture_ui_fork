@@ -1,44 +1,40 @@
 <template>
-  <div class="container">
-    <a-layout style="padding: 0 18px">
-      <Breadcrumb />
-      <a-card :title="$t('menu.monitor.redis')" class="general-card">
-        <div class="content">
-          <a-card
-            :title="$t('monitor.redis.showData.title')"
-            :loading="loading"
-            class="info-card"
-          >
-            <a-descriptions :data="showData"></a-descriptions>
-          </a-card>
-          <a-space style="padding-top: 22px" />
-          <a-row :gutter="20">
-            <a-col :span="12">
-              <a-card
-                :title="$t('monitor.redis.stats.title.commands')"
-                :loading="loading"
-                class="info-card"
-              >
-                <CommandsSeries :stats="redisStats" />
-              </a-card>
-            </a-col>
-            <a-col :span="12">
-              <a-card
-                :title="$t('monitor.redis.stats.title.used_memory')"
-                :loading="loading"
-                class="info-card"
-              >
-                <ActiveSeries :memory="redisUsedMemory" />
-              </a-card>
-            </a-col>
-          </a-row>
-        </div>
-      </a-card>
-    </a-layout>
-  </div>
-  <div class="footer">
+  <a-layout class="flex-layout">
+    <Breadcrumb />
+    <a-card :title="$t('menu.monitor.redis')" class="general-card">
+      <div class="content">
+        <a-card
+          :title="$t('monitor.redis.showData.title')"
+          :loading="loading"
+          class="info-card"
+        >
+          <a-descriptions :data="showData"></a-descriptions>
+        </a-card>
+        <a-space style="padding-top: 22px" />
+        <a-row :gutter="20">
+          <a-col :span="12">
+            <a-card
+              :title="$t('monitor.redis.stats.title.commands')"
+              :loading="loading"
+              class="info-card"
+            >
+              <CommandsSeries :stats="redisStats" />
+            </a-card>
+          </a-col>
+          <a-col :span="12">
+            <a-card
+              :title="$t('monitor.redis.stats.title.used_memory')"
+              :loading="loading"
+              class="info-card"
+            >
+              <ActiveSeries :memory="redisUsedMemory" />
+            </a-card>
+          </a-col>
+        </a-row>
+      </div>
+    </a-card>
     <Footer />
-  </div>
+  </a-layout>
 </template>
 
 <script lang="ts" setup>

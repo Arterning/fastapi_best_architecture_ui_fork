@@ -1,207 +1,202 @@
 <template>
-    <div class="container">
-      <a-layout style="padding: 0 18px">
-        <a-card :title="$t('Excel')" class="general-card">
-          <a-row>
-            <a-col :flex="62">
-              <a-form
-                :auto-label-width="true"
-                :model="formModel"
-                label-align="right"
-              >
-                <a-row :gutter="16">
-                  <a-col :span="8">
-                    <a-form-item :label="$t('data.doc.form.name')" field="name">
-                      <a-input
-                        @keyup.enter="search"
-                        v-model="formModel.name"
-                        :placeholder="$t('data.doc.form.name.placeholder')"
-                      />
-                    </a-form-item>
-                  </a-col>
-                  <a-col :span="8">
-                    <a-form-item :label="$t('内容搜索')" field="tokens">
-                      <a-input
-                        @keyup.enter="search"
-                        v-model="formModel.tokens"
-                        :placeholder="$t('内容搜索')"
-                      />
-                    </a-form-item>
-                  </a-col>
-                </a-row>
-              </a-form>
-            </a-col>
-            <a-divider direction="vertical" style="height: 30px" />
-            <a-col :span="6">
-              <a-space :size="'medium'" direction="horizontal">
-                <a-button type="primary" @click="search">
-                  <template #icon>
-                    <icon-search />
-                  </template>
-                  {{ $t('data.doc.form.search') }}
-                </a-button>
-                <a-button @click="resetSelect">
-                  <template #icon>
-                    <icon-refresh />
-                  </template>
-                  {{ $t('data.doc.form.reset') }}
-                </a-button>
-              </a-space>
-            </a-col>
-          </a-row>
-          <a-divider />
-          <a-space :size="'medium'">
-            <a-button type="primary" @click="NewApi()">
+  <a-layout style="padding: 0 18px">
+    <a-card :title="$t('Excel')" class="general-card">
+      <a-row>
+        <a-col :flex="62">
+          <a-form
+            :auto-label-width="true"
+            :model="formModel"
+            label-align="right"
+          >
+            <a-row :gutter="16">
+              <a-col :span="8">
+                <a-form-item :label="$t('data.doc.form.name')" field="name">
+                  <a-input
+                    @keyup.enter="search"
+                    v-model="formModel.name"
+                    :placeholder="$t('data.doc.form.name.placeholder')"
+                  />
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item :label="$t('内容搜索')" field="tokens">
+                  <a-input
+                    @keyup.enter="search"
+                    v-model="formModel.tokens"
+                    :placeholder="$t('内容搜索')"
+                  />
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </a-form>
+        </a-col>
+        <a-divider direction="vertical" style="height: 30px" />
+        <a-col :span="6">
+          <a-space :size="'medium'" direction="horizontal">
+            <a-button type="primary" @click="search">
               <template #icon>
-                <icon-plus />
+                <icon-search />
               </template>
-              {{ $t('data.doc.button.create') }}
+              {{ $t('data.doc.form.search') }}
             </a-button>
-            <a-button
-              :disabled="deleteButtonStatus()"
-              status="danger"
-              @click="DeleteApi"
-            >
+            <a-button @click="resetSelect">
               <template #icon>
-                <icon-minus />
+                <icon-refresh />
               </template>
-              {{ $t('data.doc.button.delete') }}
+              {{ $t('data.doc.form.reset') }}
             </a-button>
           </a-space>
-          <div class="content">
-            
-            <a-table
-              v-model:selected-keys="rowSelectKeys"
-              :bordered="false"
-              :columns="columns"
-              :data="renderData"
-              :loading="loading"
-              :pagination="pagination"
-              :row-selection="rowSelection"
-              :size="'medium'"
-              row-key="id"
-              @page-change="onPageChange"
-              @page-size-change="onPageSizeChange"
+        </a-col>
+      </a-row>
+      <a-divider />
+      <a-space :size="'medium'">
+        <a-button type="primary" @click="NewApi()">
+          <template #icon>
+            <icon-plus />
+          </template>
+          {{ $t('data.doc.button.create') }}
+        </a-button>
+        <a-button
+          :disabled="deleteButtonStatus()"
+          status="danger"
+          @click="DeleteApi"
+        >
+          <template #icon>
+            <icon-minus />
+          </template>
+          {{ $t('data.doc.button.delete') }}
+        </a-button>
+      </a-space>
+      <div class="content">
+        
+        <a-table
+          v-model:selected-keys="rowSelectKeys"
+          :bordered="false"
+          :columns="columns"
+          :data="renderData"
+          :loading="loading"
+          :pagination="pagination"
+          :row-selection="rowSelection"
+          :size="'medium'"
+          row-key="id"
+          @page-change="onPageChange"
+          @page-size-change="onPageSizeChange"
+        >
+          <template #index="{ rowIndex }">
+            {{ rowIndex + 1 }}
+          </template>
+          <template #name="{ record }">
+          <a-link
+            @click="router.push({name: 'DocDetail', params: { id: record.id }})"
+            class="title-link"
+          >{{ record.name }}</a-link>
+          </template> 
+          <template #operate="{ record }">
+            <a-space>
+              <a-tooltip content="修改">
+                <a-link @click="EditApi(record.id)">
+                  <icon-edit style="font-size:16"/>
+                </a-link>
+              </a-tooltip>
+              <a-tooltip content="查看">
+                <a-link @click="ViewApi(record.id)">
+                  <icon-unordered-list  style="font-size:16"/>
+                </a-link>
+              </a-tooltip>                  
+              <a-tooltip content="隐藏">
+                <a-link @click="HideApi(record.id)">
+                  <icon-eye-invisible  style="font-size:16"/>
+                </a-link>
+              </a-tooltip>
+            </a-space>
+          </template>
+        </a-table>
+      </div>
+      <div class="content-modal">
+        <a-modal
+          :closable="false"
+          :on-before-ok="beforeSubmit"
+          :title="drawerTitle"
+          :visible="openNewOrEdit"
+          :width="550"
+          @cancel="cancelReq"
+          @ok="submitNewOrEdit"
+        >
+          <a-form ref="formRef" :model="form">
+            <a-form-item
+              :feedback="true"
+              :label="$t('data.doc.form.title')"
+              :rules="[
+                { required: true, message: $t('data.doc.form.title.help') },
+              ]"
+              field="title"
             >
-              <template #index="{ rowIndex }">
-                {{ rowIndex + 1 }}
-              </template>
-              <template #name="{ record }">
-              <a-link
-                @click="router.push({name: 'DocDetail', params: { id: record.id }})"
-                class="title-link"
-              >{{ record.name }}</a-link>
-              </template> 
-              <template #operate="{ record }">
-                <a-space>
-                  <a-tooltip content="修改">
-                    <a-link @click="EditApi(record.id)">
-                      <icon-edit style="font-size:16"/>
-                    </a-link>
-                  </a-tooltip>
-                  <a-tooltip content="查看">
-                    <a-link @click="ViewApi(record.id)">
-                      <icon-unordered-list  style="font-size:16"/>
-                    </a-link>
-                  </a-tooltip>                  
-                  <a-tooltip content="隐藏">
-                    <a-link @click="HideApi(record.id)">
-                      <icon-eye-invisible  style="font-size:16"/>
-                    </a-link>
-                  </a-tooltip>
-                </a-space>
-              </template>
-            </a-table>
-          </div>
-          <div class="content-modal">
-            <a-modal
-              :closable="false"
-              :on-before-ok="beforeSubmit"
-              :title="drawerTitle"
-              :visible="openNewOrEdit"
-              :width="550"
-              @cancel="cancelReq"
-              @ok="submitNewOrEdit"
+              <a-input
+                v-model="form.title"
+                :placeholder="$t('data.doc.form.name.placeholder')"
+              ></a-input>
+            </a-form-item>
+            <a-form-item
+              :feedback="true"
+              :label="$t('data.doc.form.name')"
+              field="name"
             >
-              <a-form ref="formRef" :model="form">
-                <a-form-item
-                  :feedback="true"
-                  :label="$t('data.doc.form.title')"
-                  :rules="[
-                    { required: true, message: $t('data.doc.form.title.help') },
-                  ]"
-                  field="title"
-                >
-                  <a-input
-                    v-model="form.title"
-                    :placeholder="$t('data.doc.form.name.placeholder')"
-                  ></a-input>
-                </a-form-item>
-                <a-form-item
-                  :feedback="true"
-                  :label="$t('data.doc.form.name')"
-                  field="name"
-                >
-                  <a-input
-                    v-model="form.name"
-                  ></a-input>
-                </a-form-item>
-                <a-form-item
-                  :label="$t('data.doc.form.type')"
-                  field="type"
-                >
-                  <a-input
-                    v-model="form.type"
-                  ></a-input>
-                </a-form-item>
-                <a-form-item
-                  :label="$t('data.doc.form.desc')"
-                  field="desc"
-                >
-                  <a-textarea
-                    v-model="form.desc"
-                  ></a-textarea>
-                </a-form-item>
-                <a-form-item
-                  :label="$t('data.doc.form.content')"
-                  field="content"
-                >
-                  <a-textarea
-                    v-model="form.content"
-                  ></a-textarea>
-                </a-form-item>
-              </a-form>
-            </a-modal>
-            <a-modal
-              :closable="false"
-              :title="`${$t('modal.title.tips')}`"
-              :visible="openDelete"
-              :width="360"
-              @cancel="cancelReq"
-              @ok="submitDelete"
+              <a-input
+                v-model="form.name"
+              ></a-input>
+            </a-form-item>
+            <a-form-item
+              :label="$t('data.doc.form.type')"
+              field="type"
             >
-              <a-space>
-                <icon-exclamation-circle-fill size="24" style="color: #e6a23c" />
-                {{ $t('modal.title.tips.delete') }}
-              </a-space>
-            </a-modal>
-            <a-modal
-              :closable="false"
-              :title="`${$t('内容')}`"
-              :visible="openView"
-              fullscreen
-              @cancel="cancelReq"
-              @ok="cancelReq"
+              <a-input
+                v-model="form.type"
+              ></a-input>
+            </a-form-item>
+            <a-form-item
+              :label="$t('data.doc.form.desc')"
+              field="desc"
             >
-              <ExcelDetail :title="form.title" :doc_data="form.doc_data" :file="form.file"/>
-            </a-modal>
-          </div>
-        </a-card>
-      </a-layout>
-    </div>
-    <div class="footer">
-      <Footer />
-    </div>
+              <a-textarea
+                v-model="form.desc"
+              ></a-textarea>
+            </a-form-item>
+            <a-form-item
+              :label="$t('data.doc.form.content')"
+              field="content"
+            >
+              <a-textarea
+                v-model="form.content"
+              ></a-textarea>
+            </a-form-item>
+          </a-form>
+        </a-modal>
+        <a-modal
+          :closable="false"
+          :title="`${$t('modal.title.tips')}`"
+          :visible="openDelete"
+          :width="360"
+          @cancel="cancelReq"
+          @ok="submitDelete"
+        >
+          <a-space>
+            <icon-exclamation-circle-fill size="24" style="color: #e6a23c" />
+            {{ $t('modal.title.tips.delete') }}
+          </a-space>
+        </a-modal>
+        <a-modal
+          :closable="false"
+          :title="`${$t('内容')}`"
+          :visible="openView"
+          fullscreen
+          @cancel="cancelReq"
+          @ok="cancelReq"
+        >
+          <ExcelDetail :title="form.title" :doc_data="form.doc_data" :file="form.file"/>
+        </a-modal>
+      </div>
+    </a-card>
+  </a-layout>
   </template>
   
   <script lang="ts" setup>

@@ -1,140 +1,136 @@
 <template>
-  <div class="container">
-    <a-layout style="padding: 0 18px">
-      <Breadcrumb />
-      <a-card :title="$t('menu.log.opera')" class="general-card">
-        <a-row>
-          <a-col :flex="62">
-            <a-form
-              :label-col-props="{ span: 6 }"
-              :model="formModel"
-              label-align="right"
-              :auto-label-width="true"
-            >
-              <a-row>
-                <a-col :span="8">
-                  <a-form-item
-                    :label="$t('log.opera.form.username')"
-                    field="username"
-                  >
-                    <a-input
-                      v-model="formModel.username"
-                      :placeholder="$t('log.opera.form.username.placeholder')"
-                    />
-                  </a-form-item>
-                </a-col>
-                <a-col :span="8">
-                  <a-form-item :label="$t('log.opera.form.ip')" field="ip">
-                    <a-input
-                      v-model="formModel.ip"
-                      :placeholder="$t('log.opera.form.ip.placeholder')"
-                    />
-                  </a-form-item>
-                </a-col>
-                <a-col :span="8">
-                  <a-form-item
-                    :label="$t('log.opera.form.status')"
-                    field="status"
-                  >
-                    <a-select
-                      v-model="formModel.status"
-                      :options="statusOptions"
-                      :placeholder="$t('log.opera.form.selectDefault')"
-                      allow-clear
-                      @clear="resetStatus"
-                    />
-                  </a-form-item>
-                </a-col>
-              </a-row>
-            </a-form>
-          </a-col>
-          <a-divider direction="vertical" style="height: 30px" />
-          <a-col :flex="8">
-            <a-space :size="'medium'" direction="horizontal">
-              <a-button type="primary" @click="search">
-                <template #icon>
-                  <icon-search />
-                </template>
-                {{ $t('log.opera.form.search') }}
-              </a-button>
-              <a-button @click="reset">
-                <template #icon>
-                  <icon-refresh />
-                </template>
-                {{ $t('log.opera.form.reset') }}
-              </a-button>
-            </a-space>
-          </a-col>
-        </a-row>
-        <a-divider />
-        <div class="content">
-          <a-table
-            :bordered="false"
-            :columns="columns"
-            :data="renderData"
-            :loading="loading"
-            :pagination="pagination"
-            :size="'medium'"
-            row-key="id"
-            @page-change="onPageChange"
-            @page-size-change="onPageSizeChange"
+  <a-layout class="flex-layout">
+    <Breadcrumb />
+    <a-card :title="$t('menu.log.opera')" class="general-card">
+      <a-row>
+        <a-col :flex="62">
+          <a-form
+            :label-col-props="{ span: 6 }"
+            :model="formModel"
+            label-align="right"
+            :auto-label-width="true"
           >
-            <template #method="{ record }">
-              <a-tag
-                v-if="record.method === 'GET'"
-                :color="`arcoblue`"
-                bordered
-              >
-                {{ record.method }}
-              </a-tag>
-              <a-tag
-                v-else-if="record.method === 'POST'"
-                :color="`magenta`"
-                bordered
-              >
-                {{ record.method }}
-              </a-tag>
-              <a-tag
-                v-else-if="record.method === 'DELETE'"
-                :color="`red`"
-                bordered
-              >
-                {{ record.method }}
-              </a-tag>
-              <a-tag v-else :color="`cyan`" bordered>
-                {{ record.method }}
-              </a-tag>
-            </template>
-            <template #code="{ record }">
-              <a-tag v-if="record.code == 200" :color="`green`" bordered>
-                {{ record.code }}
-              </a-tag>
-              <a-tag v-else :color="`orange`" bordered>
-                {{ record.code }}
-              </a-tag>
-            </template>
-            <template #status="{ record }">
-              <a-tag v-if="record.status === 1" :color="`green`" bordered>
-                {{ $t(`log.opera.form.status.${record.status}`) }}
-              </a-tag>
-              <a-tag v-else :color="`red`" bordered>
-                {{ $t(`log.opera.form.status.${record.status}`) }}
-              </a-tag>
-            </template>
-            <template #cost_time="{ record }">
-              {{ record.cost_time.toFixed(3) }}
-            </template>
-            <template #opera_time="{ record }">
-              {{ tableDateFormat(record.opera_time) }}
-            </template>
-          </a-table>
-        </div>
-      </a-card>
-    </a-layout>
-  </div>
-  <div class="footer">
+            <a-row>
+              <a-col :span="8">
+                <a-form-item
+                  :label="$t('log.opera.form.username')"
+                  field="username"
+                >
+                  <a-input
+                    v-model="formModel.username"
+                    :placeholder="$t('log.opera.form.username.placeholder')"
+                  />
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item :label="$t('log.opera.form.ip')" field="ip">
+                  <a-input
+                    v-model="formModel.ip"
+                    :placeholder="$t('log.opera.form.ip.placeholder')"
+                  />
+                </a-form-item>
+              </a-col>
+              <a-col :span="8">
+                <a-form-item
+                  :label="$t('log.opera.form.status')"
+                  field="status"
+                >
+                  <a-select
+                    v-model="formModel.status"
+                    :options="statusOptions"
+                    :placeholder="$t('log.opera.form.selectDefault')"
+                    allow-clear
+                    @clear="resetStatus"
+                  />
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </a-form>
+        </a-col>
+        <a-divider direction="vertical" style="height: 30px" />
+        <a-col :flex="8">
+          <a-space :size="'medium'" direction="horizontal">
+            <a-button type="primary" @click="search">
+              <template #icon>
+                <icon-search />
+              </template>
+              {{ $t('log.opera.form.search') }}
+            </a-button>
+            <a-button @click="reset">
+              <template #icon>
+                <icon-refresh />
+              </template>
+              {{ $t('log.opera.form.reset') }}
+            </a-button>
+          </a-space>
+        </a-col>
+      </a-row>
+      <a-divider />
+      <div class="content">
+        <a-table
+          :bordered="false"
+          :columns="columns"
+          :data="renderData"
+          :loading="loading"
+          :pagination="pagination"
+          :size="'medium'"
+          row-key="id"
+          @page-change="onPageChange"
+          @page-size-change="onPageSizeChange"
+        >
+          <template #method="{ record }">
+            <a-tag
+              v-if="record.method === 'GET'"
+              :color="`arcoblue`"
+              bordered
+            >
+              {{ record.method }}
+            </a-tag>
+            <a-tag
+              v-else-if="record.method === 'POST'"
+              :color="`magenta`"
+              bordered
+            >
+              {{ record.method }}
+            </a-tag>
+            <a-tag
+              v-else-if="record.method === 'DELETE'"
+              :color="`red`"
+              bordered
+            >
+              {{ record.method }}
+            </a-tag>
+            <a-tag v-else :color="`cyan`" bordered>
+              {{ record.method }}
+            </a-tag>
+          </template>
+          <template #code="{ record }">
+            <a-tag v-if="record.code == 200" :color="`green`" bordered>
+              {{ record.code }}
+            </a-tag>
+            <a-tag v-else :color="`orange`" bordered>
+              {{ record.code }}
+            </a-tag>
+          </template>
+          <template #status="{ record }">
+            <a-tag v-if="record.status === 1" :color="`green`" bordered>
+              {{ $t(`log.opera.form.status.${record.status}`) }}
+            </a-tag>
+            <a-tag v-else :color="`red`" bordered>
+              {{ $t(`log.opera.form.status.${record.status}`) }}
+            </a-tag>
+          </template>
+          <template #cost_time="{ record }">
+            {{ record.cost_time.toFixed(3) }}
+          </template>
+          <template #opera_time="{ record }">
+            {{ tableDateFormat(record.opera_time) }}
+          </template>
+        </a-table>
+      </div>
+    </a-card>
     <Footer />
-  </div>
+  </a-layout>
 </template>
 
 <script lang="ts" setup>

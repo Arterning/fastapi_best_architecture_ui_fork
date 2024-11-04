@@ -1,287 +1,503 @@
 <template>
-  <div class="container">
-    <a-layout style="padding: 0 18px">
-      <Breadcrumb />
-      <a-card
-        :title="$t('menu.automation.card.dataImport')"
-        class="general-card"
+  <a-layout style="padding: 0 18px">
+    <Breadcrumb />
+    <a-card
+      :title="$t('menu.automation.card.dataImport')"
+      class="general-card"
+    >
+      <a-alert :type="'warning'" style="margin-bottom: 20px">
+        {{ $t('automation.code-gen.tooltip.import') }}
+      </a-alert>
+      <a-button type="primary" style="margin-right: 10px" @click="openGetDB">
+        <template #icon>
+          <icon-search />
+        </template>
+        {{ $t('automation.code-gen.button.getDB') }}
+      </a-button>
+      <a-drawer
+        v-model:visible="getDBDrawer"
+        :footer="false"
+        :width="688"
+        :header="false"
       >
-        <a-alert :type="'warning'" style="margin-bottom: 20px">
-          {{ $t('automation.code-gen.tooltip.import') }}
+        <a-alert type="warning" style="margin-top: 10px">
+          {{ $t('automation.code-gen.alert.getDB') }}
         </a-alert>
-        <a-button type="primary" style="margin-right: 10px" @click="openGetDB">
-          <template #icon>
-            <icon-search />
-          </template>
-          {{ $t('automation.code-gen.button.getDB') }}
-        </a-button>
-        <a-drawer
-          v-model:visible="getDBDrawer"
-          :footer="false"
-          :width="688"
-          :header="false"
+        <a-form :model="getDBForm" style="margin-top: 20px">
+          <a-form-item
+            :label="$t('automation.code-gen.form.db_name')"
+            :rules="[
+              {
+                required: true,
+                match: /^[a-z_]+$/,
+                lowercase: true,
+                message: $t('automation.code-gen.form.db_name.help'),
+              },
+            ]"
+            field="table_schema"
+          >
+            <a-input
+              v-model="getDBForm.table_schema"
+              :placeholder="
+                $t('automation.code-gen.form.db_name.placeholder')
+              "
+            />
+          </a-form-item>
+        </a-form>
+        <a-button
+          type="primary"
+          :disabled="getDBButton()"
+          style="float: right; margin-bottom: 20px"
+          @click="featDBTables({ ...getDBForm })"
         >
-          <a-alert type="warning" style="margin-top: 10px">
-            {{ $t('automation.code-gen.alert.getDB') }}
-          </a-alert>
-          <a-form :model="getDBForm" style="margin-top: 20px">
-            <a-form-item
-              :label="$t('automation.code-gen.form.db_name')"
-              :rules="[
-                {
-                  required: true,
-                  match: /^[a-z_]+$/,
-                  lowercase: true,
-                  message: $t('automation.code-gen.form.db_name.help'),
-                },
-              ]"
-              field="table_schema"
-            >
-              <a-input
-                v-model="getDBForm.table_schema"
-                :placeholder="
-                  $t('automation.code-gen.form.db_name.placeholder')
-                "
-              />
-            </a-form-item>
-          </a-form>
-          <a-button
-            type="primary"
-            :disabled="getDBButton()"
-            style="float: right; margin-bottom: 20px"
-            @click="featDBTables({ ...getDBForm })"
+          {{ $t('automation.code-gen.button.getDB.req') }}
+        </a-button>
+        <a-list
+          style="margin-top: 55px"
+          :loading="DBTablesStatus"
+          :hoverable="true"
+        >
+          <template #header>
+            {{ $t('automation.code-gen.list.header') }}
+          </template>
+          <a-list-item
+            v-for="(table, index) of DBTables.values()"
+            :key="index"
           >
-            {{ $t('automation.code-gen.button.getDB.req') }}
-          </a-button>
-          <a-list
-            style="margin-top: 55px"
-            :loading="DBTablesStatus"
-            :hoverable="true"
+            {{ table }}
+          </a-list-item>
+        </a-list>
+      </a-drawer>
+      <a-button type="primary" @click="openImport">
+        <template #icon>
+          <icon-plus />
+        </template>
+        {{ $t('automation.code-gen.button.import') }}
+      </a-button>
+      <a-modal
+        v-model:visible="importDrawer"
+        :width="600"
+        :closable="false"
+        :title="$t('automation.code-gen.modal.import')"
+        :on-before-ok="beforeSubmit"
+        @cancel="cancelImport"
+        @ok="importBusinessModel"
+      >
+        <a-form ref="formRef" :model="importForm" style="margin-top: 10px">
+          <a-form-item
+            :label="$t('automation.code-gen.form.app')"
+            :tooltip="$t('automation.code-gen.form.app.tooltip')"
+            :rules="[
+              {
+                required: true,
+                match: /^[a-z_]+$/,
+                lowercase: true,
+                message: $t('automation.code-gen.form.app.help'),
+              },
+            ]"
+            field="app"
           >
-            <template #header>
-              {{ $t('automation.code-gen.list.header') }}
-            </template>
-            <a-list-item
-              v-for="(table, index) of DBTables.values()"
-              :key="index"
-            >
-              {{ table }}
-            </a-list-item>
-          </a-list>
-        </a-drawer>
-        <a-button type="primary" @click="openImport">
+            <a-input
+              v-model="importForm.app"
+              :placeholder="$t('automation.code-gen.form.app.placeholder')"
+            />
+          </a-form-item>
+          <a-form-item
+            :label="$t('automation.code-gen.form.db_name')"
+            :tooltip="$t('automation.code-gen.form.db_name.tooltip')"
+            :rules="[
+              {
+                required: true,
+                match: /^[a-z_]+$/,
+                lowercase: true,
+                message: $t('automation.code-gen.form.db_name.help'),
+              },
+            ]"
+            field="table_schema"
+          >
+            <a-input
+              v-model="importForm.table_schema"
+              :placeholder="
+                $t('automation.code-gen.form.db_name.placeholder')
+              "
+            />
+          </a-form-item>
+          <a-form-item
+            :label="$t('automation.code-gen.form.table_name')"
+            :tooltip="$t('automation.code-gen.form.table_name.tooltip')"
+            :rules="[
+              {
+                required: true,
+                match: /^[a-z_]+$/,
+                lowercase: true,
+                message: $t('automation.code-gen.form.table_name.help'),
+              },
+            ]"
+            field="table_name"
+          >
+            <a-input
+              v-model="importForm.table_name"
+              :placeholder="
+                $t('automation.code-gen.form.table_name.placeholder')
+              "
+            />
+          </a-form-item>
+        </a-form>
+      </a-modal>
+    </a-card>
+    <a-card
+      :title="$t('menu.automation.card.codeGenerate')"
+      class="general-card"
+      style="margin-top: 10px"
+    >
+      <a-alert :type="'warning'" :closable="true" style="margin-bottom: 20px">
+        {{ $t('automation.code-gen.tooltip.business') }}
+      </a-alert>
+      <a-tooltip :content="$t('automation.code-gen.button.tooltip.business')">
+        <a-button
+          type="primary"
+          style="margin: 0 10px 20px 0"
+          @click="openBusiness"
+        >
           <template #icon>
             <icon-plus />
           </template>
-          {{ $t('automation.code-gen.button.import') }}
+          {{ $t('automation.code-gen.button.business') }}
         </a-button>
+      </a-tooltip>
+      <a-modal
+        v-model:visible="businessDrawer"
+        :closable="false"
+        :width="688"
+        :title="businessDrawerTitle"
+        :on-before-ok="beforeSubmit"
+        @ok="submitNewOrEditBusiness"
+        @cancel="cancelBusiness"
+      >
+        <a-form ref="formRef" :model="businessForm">
+          <a-form-item
+            :label="$t('automation.code-gen.form.app_name')"
+            :tooltip="$t('automation.code-gen.form.app_name.tooltip')"
+            :rules="[
+              {
+                required: true,
+                message: $t('automation.code-gen.form.app_name.help'),
+              },
+            ]"
+            field="app_name"
+          >
+            <a-input
+              v-model="businessForm.app_name"
+              :placeholder="
+                $t('automation.code-gen.form.app_name.placeholder')
+              "
+            />
+          </a-form-item>
+          <a-form-item
+            :label="$t('automation.code-gen.form.table_name_en')"
+            :rules="[
+              {
+                required: true,
+                message: $t('automation.code-gen.form.table_name_en.help'),
+              },
+            ]"
+            field="table_name_en"
+          >
+            <a-input
+              v-model="businessForm.table_name_en"
+              :placeholder="
+                $t('automation.code-gen.form.table_name_en.placeholder')
+              "
+            />
+          </a-form-item>
+          <a-form-item
+            :label="$t('automation.code-gen.form.table_name_zh')"
+            :rules="[
+              {
+                required: true,
+                match: /^[\u4e00-\u9fa5]+$/,
+                message: $t('automation.code-gen.form.table_name_zh.help'),
+              },
+            ]"
+            field="table_name_zh"
+          >
+            <a-input
+              v-model="businessForm.table_name_zh"
+              :placeholder="
+                $t('automation.code-gen.form.table_name_zh.placeholder')
+              "
+            />
+          </a-form-item>
+          <a-form-item
+            :label="$t('automation.code-gen.form.table_simple_name_zh')"
+            :rules="[
+              {
+                required: true,
+                match: /^[\u4e00-\u9fa5]+$/,
+                message: $t(
+                  'automation.code-gen.form.table_simple_name_zh.help'
+                ),
+              },
+            ]"
+            field="table_simple_name_zh"
+          >
+            <a-input
+              v-model="businessForm.table_simple_name_zh"
+              :placeholder="
+                $t(
+                  'automation.code-gen.form.table_simple_name_zh.placeholder'
+                )
+              "
+            />
+          </a-form-item>
+          <a-form-item
+            :label="$t('automation.code-gen.form.table_comment')"
+            field="table_comment"
+          >
+            <a-input
+              v-model="businessForm.table_comment"
+              :placeholder="
+                $t('automation.code-gen.form.table_comment.placeholder')
+              "
+            />
+          </a-form-item>
+          <a-form-item
+            :label="$t('automation.code-gen.form.schema_name')"
+            :tooltip="$t('automation.code-gen.form.schema_name.tooltip')"
+            field="schema_name"
+          >
+            <a-input
+              v-model="businessForm.schema_name"
+              :placeholder="
+                $t('automation.code-gen.form.schema_name.placeholder')
+              "
+            />
+          </a-form-item>
+          <a-form-item
+            :label="$t('automation.code-gen.form.default_datetime_column')"
+            :tooltip="
+              $t('automation.code-gen.form.default_datetime_column.tooltip')
+            "
+            field="default_datetime_column"
+          >
+            <a-switch v-model="switchStatus">
+              <template #checked>
+                {{ $t('switch.open') }}
+              </template>
+              <template #unchecked>
+                {{ $t('switch.close') }}
+              </template>
+            </a-switch>
+          </a-form-item>
+          <a-form-item
+            :label="$t('automation.code-gen.form.api_version')"
+            :tooltip="$t('automation.code-gen.form.api_version.tooltip')"
+            :rules="[
+              {
+                required: true,
+                message: $t('automation.code-gen.form.api_version.help'),
+              },
+            ]"
+            field="api_version"
+          >
+            <a-input
+              v-model="businessForm.api_version"
+              :placeholder="
+                $t('automation.code-gen.form.api_version.placeholder')
+              "
+            />
+          </a-form-item>
+          <a-form-item
+            :label="$t('automation.code-gen.form.gen_path')"
+            :tooltip="$t('automation.code-gen.form.gen_path.tooltip')"
+            field="gen_path"
+          >
+            <a-input
+              v-model="businessForm.gen_path"
+              :placeholder="
+                $t('automation.code-gen.form.gen_path.placeholder')
+              "
+            />
+          </a-form-item>
+          <a-form-item
+            :label="$t('automation.code-gen.form.remark')"
+            field="remark"
+          >
+            <a-textarea
+              v-model="businessForm.remark"
+              :placeholder="$t('automation.code-gen.form.remark.placeholder')"
+            />
+          </a-form-item>
+        </a-form>
+      </a-modal>
+      <a-table
+        :size="'medium'"
+        :columns="businessColumns"
+        :data="businessList"
+        row-key="id"
+        :pagination="false"
+      >
+        <template #default_datetime_column="{ record }">
+          <a-badge
+            v-if="record.default_datetime_column === true"
+            :status="'success'"
+          />
+          <a-badge v-else :status="'danger'" />
+        </template>
+        <template #operate="{ record }">
+          <a-space>
+            <a-link @click="viewBusiness(record.id)">
+              {{ $t(`admin.menu.columns.view`) }}
+            </a-link>
+            <a-link @click="EditBusiness(record.id)">
+              {{ $t(`admin.menu.columns.edit`) }}
+            </a-link>
+            <a-link :status="'danger'" @click="DeleteBusiness(record.id)">
+              {{ $t(`admin.menu.columns.delete`) }}
+            </a-link>
+          </a-space>
+        </template>
+      </a-table>
+      <a-modal
+        v-model:visible="businessDeleteModal"
+        :title="$t('modal.title.tips')"
+        :closable="false"
+        @cancel="cancelDeleteBusiness"
+        @ok="submitDelete"
+      >
+        <a-space>
+          <icon-exclamation-circle-fill size="24" style="color: #e6a23c" />
+          {{ $t('automation.code-gen.modal.business.delete') }}
+        </a-space>
+      </a-modal>
+      <a-drawer
+        v-model:visible="genModelDrawer"
+        :footer="false"
+        :width="1440"
+        :header="false"
+      >
+        <a-button
+          type="primary"
+          style="margin: 20px 0 20px"
+          @click="openModel"
+        >
+          <template #icon>
+            <icon-plus />
+          </template>
+          {{ $t('automation.code-gen.button.model') }}
+        </a-button>
+        <a-alert
+          :type="'warning'"
+          :closable="true"
+          style="margin-bottom: 20px"
+        >
+          {{ $t('automation.code-gen.tooltip.model') }}
+        </a-alert>
         <a-modal
-          v-model:visible="importDrawer"
+          v-model:visible="modelDrawer"
           :width="600"
           :closable="false"
-          :title="$t('automation.code-gen.modal.import')"
+          :title="modelDrawerTitle"
           :on-before-ok="beforeSubmit"
-          @cancel="cancelImport"
-          @ok="importBusinessModel"
+          @ok="submitNewOrEditModel"
+          @cancel="cancelModel"
         >
-          <a-form ref="formRef" :model="importForm" style="margin-top: 10px">
+          <a-form ref="formRef" :model="modelForm">
             <a-form-item
-              :label="$t('automation.code-gen.form.app')"
-              :tooltip="$t('automation.code-gen.form.app.tooltip')"
+              :label="$t('automation.code-gen.form.name')"
               :rules="[
                 {
                   required: true,
-                  match: /^[a-z_]+$/,
-                  lowercase: true,
-                  message: $t('automation.code-gen.form.app.help'),
+                  message: $t('automation.code-gen.form.name.help'),
                 },
               ]"
-              field="app"
+              field="name"
             >
               <a-input
-                v-model="importForm.app"
-                :placeholder="$t('automation.code-gen.form.app.placeholder')"
+                v-model="modelForm.name"
+                :placeholder="$t('automation.code-gen.form.name.placeholder')"
+              />
+            </a-form-item>
+            <a-form-item :label="$t('automation.code-gen.form.comment')">
+              <a-input
+                v-model="modelForm.comment"
+                :placeholder="
+                  $t('automation.code-gen.form.comment.placeholder')
+                "
+                field="comment"
               />
             </a-form-item>
             <a-form-item
-              :label="$t('automation.code-gen.form.db_name')"
-              :tooltip="$t('automation.code-gen.form.db_name.tooltip')"
+              :label="$t('automation.code-gen.form.type')"
               :rules="[
                 {
                   required: true,
-                  match: /^[a-z_]+$/,
-                  lowercase: true,
-                  message: $t('automation.code-gen.form.db_name.help'),
+                  message: $t('automation.code-gen.form.type.help'),
                 },
               ]"
-              field="table_schema"
+              field="type"
             >
+              <a-select
+                v-model="modelForm.type"
+                :allow-search="true"
+                :field-names="SQLATypeFN"
+                :options="SQLATypeOptions"
+                :placeholder="$t('automation.code-gen.form.type.placeholder')"
+                @click="fetchModelType"
+              />
+            </a-form-item>
+            <a-form-item :label="$t('automation.code-gen.form.default')">
               <a-input
-                v-model="importForm.table_schema"
+                v-model="modelForm.default"
                 :placeholder="
-                  $t('automation.code-gen.form.db_name.placeholder')
+                  $t('automation.code-gen.form.default.placeholder')
                 "
+                field="default"
               />
             </a-form-item>
             <a-form-item
-              :label="$t('automation.code-gen.form.table_name')"
-              :tooltip="$t('automation.code-gen.form.table_name.tooltip')"
+              :label="$t('automation.code-gen.form.sort')"
               :rules="[
                 {
                   required: true,
-                  match: /^[a-z_]+$/,
-                  lowercase: true,
-                  message: $t('automation.code-gen.form.table_name.help'),
+                  message: $t('automation.code-gen.form.sort.help'),
                 },
               ]"
-              field="table_name"
+              field="sort"
             >
-              <a-input
-                v-model="importForm.table_name"
-                :placeholder="
-                  $t('automation.code-gen.form.table_name.placeholder')
-                "
-              />
-            </a-form-item>
-          </a-form>
-        </a-modal>
-      </a-card>
-      <a-card
-        :title="$t('menu.automation.card.codeGenerate')"
-        class="general-card"
-        style="margin-top: 10px"
-      >
-        <a-alert :type="'warning'" :closable="true" style="margin-bottom: 20px">
-          {{ $t('automation.code-gen.tooltip.business') }}
-        </a-alert>
-        <a-tooltip :content="$t('automation.code-gen.button.tooltip.business')">
-          <a-button
-            type="primary"
-            style="margin: 0 10px 20px 0"
-            @click="openBusiness"
-          >
-            <template #icon>
-              <icon-plus />
-            </template>
-            {{ $t('automation.code-gen.button.business') }}
-          </a-button>
-        </a-tooltip>
-        <a-modal
-          v-model:visible="businessDrawer"
-          :closable="false"
-          :width="688"
-          :title="businessDrawerTitle"
-          :on-before-ok="beforeSubmit"
-          @ok="submitNewOrEditBusiness"
-          @cancel="cancelBusiness"
-        >
-          <a-form ref="formRef" :model="businessForm">
-            <a-form-item
-              :label="$t('automation.code-gen.form.app_name')"
-              :tooltip="$t('automation.code-gen.form.app_name.tooltip')"
-              :rules="[
-                {
-                  required: true,
-                  message: $t('automation.code-gen.form.app_name.help'),
-                },
-              ]"
-              field="app_name"
-            >
-              <a-input
-                v-model="businessForm.app_name"
-                :placeholder="
-                  $t('automation.code-gen.form.app_name.placeholder')
-                "
+              <a-input-number
+                v-model="modelForm.sort"
+                :placeholder="$t('automation.code-gen.form.sort.placeholder')"
               />
             </a-form-item>
             <a-form-item
-              :label="$t('automation.code-gen.form.table_name_en')"
-              :rules="[
-                {
-                  required: true,
-                  message: $t('automation.code-gen.form.table_name_en.help'),
-                },
-              ]"
-              field="table_name_en"
-            >
-              <a-input
-                v-model="businessForm.table_name_en"
-                :placeholder="
-                  $t('automation.code-gen.form.table_name_en.placeholder')
-                "
-              />
-            </a-form-item>
-            <a-form-item
-              :label="$t('automation.code-gen.form.table_name_zh')"
-              :rules="[
-                {
-                  required: true,
-                  match: /^[\u4e00-\u9fa5]+$/,
-                  message: $t('automation.code-gen.form.table_name_zh.help'),
-                },
-              ]"
-              field="table_name_zh"
-            >
-              <a-input
-                v-model="businessForm.table_name_zh"
-                :placeholder="
-                  $t('automation.code-gen.form.table_name_zh.placeholder')
-                "
-              />
-            </a-form-item>
-            <a-form-item
-              :label="$t('automation.code-gen.form.table_simple_name_zh')"
-              :rules="[
-                {
-                  required: true,
-                  match: /^[\u4e00-\u9fa5]+$/,
-                  message: $t(
-                    'automation.code-gen.form.table_simple_name_zh.help'
-                  ),
-                },
-              ]"
-              field="table_simple_name_zh"
-            >
-              <a-input
-                v-model="businessForm.table_simple_name_zh"
-                :placeholder="
-                  $t(
-                    'automation.code-gen.form.table_simple_name_zh.placeholder'
-                  )
-                "
-              />
-            </a-form-item>
-            <a-form-item
-              :label="$t('automation.code-gen.form.table_comment')"
-              field="table_comment"
-            >
-              <a-input
-                v-model="businessForm.table_comment"
-                :placeholder="
-                  $t('automation.code-gen.form.table_comment.placeholder')
-                "
-              />
-            </a-form-item>
-            <a-form-item
-              :label="$t('automation.code-gen.form.schema_name')"
-              :tooltip="$t('automation.code-gen.form.schema_name.tooltip')"
-              field="schema_name"
-            >
-              <a-input
-                v-model="businessForm.schema_name"
-                :placeholder="
-                  $t('automation.code-gen.form.schema_name.placeholder')
-                "
-              />
-            </a-form-item>
-            <a-form-item
-              :label="$t('automation.code-gen.form.default_datetime_column')"
-              :tooltip="
-                $t('automation.code-gen.form.default_datetime_column.tooltip')
+              v-show="
+                ['NVARCHAR', 'String', 'Unicode', 'VARCHAR'].includes(
+                  modelForm.type
+                )
               "
-              field="default_datetime_column"
+              :label="$t('automation.code-gen.form.length')"
+              :rules="[
+                {
+                  required: true,
+                  message: $t('automation.code-gen.form.length.help'),
+                },
+              ]"
+              field="length"
             >
-              <a-switch v-model="switchStatus">
+              <a-input-number
+                v-model="modelForm.length"
+                :placeholder="
+                  $t('automation.code-gen.form.length.placeholder')
+                "
+              />
+            </a-form-item>
+            <a-form-item
+              :label="$t('automation.code-gen.form.is_pk')"
+              :tooltip="$t('automation.code-gen.form.is_pk.tooltip')"
+              field="is_pk"
+            >
+              <a-switch v-model="switchPkStatus">
                 <template #checked>
                   {{ $t('switch.open') }}
                 </template>
@@ -291,410 +507,190 @@
               </a-switch>
             </a-form-item>
             <a-form-item
-              :label="$t('automation.code-gen.form.api_version')"
-              :tooltip="$t('automation.code-gen.form.api_version.tooltip')"
+              :label="$t('automation.code-gen.form.is_nullable')"
+              field="is_nullable"
+            >
+              <a-switch v-model="switchNullableStatus">
+                <template #checked>
+                  {{ $t('switch.open') }}
+                </template>
+                <template #unchecked>
+                  {{ $t('switch.close') }}
+                </template>
+              </a-switch>
+            </a-form-item>
+            <a-form-item
+              :label="$t('automation.code-gen.form.gen_business_id')"
+              field="gen_business_id"
               :rules="[
                 {
                   required: true,
-                  message: $t('automation.code-gen.form.api_version.help'),
+                  message: $t(
+                    'automation.code-gen.form.gen_business_id.help'
+                  ),
                 },
               ]"
-              field="api_version"
             >
-              <a-input
-                v-model="businessForm.api_version"
+              <a-select
+                v-model="operateBusinessRow"
                 :placeholder="
-                  $t('automation.code-gen.form.api_version.placeholder')
+                  $t('automation.code-gen.form.gen_business_id.placeholder')
                 "
-              />
-            </a-form-item>
-            <a-form-item
-              :label="$t('automation.code-gen.form.gen_path')"
-              :tooltip="$t('automation.code-gen.form.gen_path.tooltip')"
-              field="gen_path"
-            >
-              <a-input
-                v-model="businessForm.gen_path"
-                :placeholder="
-                  $t('automation.code-gen.form.gen_path.placeholder')
-                "
-              />
-            </a-form-item>
-            <a-form-item
-              :label="$t('automation.code-gen.form.remark')"
-              field="remark"
-            >
-              <a-textarea
-                v-model="businessForm.remark"
-                :placeholder="$t('automation.code-gen.form.remark.placeholder')"
+                :options="businessList"
+                :field-names="BusinessFN"
+                :disabled="true"
               />
             </a-form-item>
           </a-form>
         </a-modal>
         <a-table
           :size="'medium'"
-          :columns="businessColumns"
-          :data="businessList"
+          :columns="modelColumns"
+          :data="modelList"
+          :loading="loading"
           row-key="id"
           :pagination="false"
         >
-          <template #default_datetime_column="{ record }">
-            <a-badge
-              v-if="record.default_datetime_column === true"
-              :status="'success'"
+          <template #empty>
+            <a-empty
+              v-if="operateBusinessRow"
+              :description="$t('automation.code-gen.table.model.empty')"
             />
+            <a-empty v-else />
+          </template>
+          <template #index="{ rowIndex }">
+            {{ rowIndex + 1 }}
+          </template>
+          <template #is_pk="{ record }">
+            <a-badge v-if="record.is_pk === 1" :status="'success'" />
+            <a-badge v-else :status="'danger'" />
+          </template>
+          <template #is_nullable="{ record }">
+            <a-badge v-if="record.is_nullable === true" :status="'success'" />
             <a-badge v-else :status="'danger'" />
           </template>
           <template #operate="{ record }">
             <a-space>
-              <a-link @click="viewBusiness(record.id)">
-                {{ $t(`admin.menu.columns.view`) }}
-              </a-link>
-              <a-link @click="EditBusiness(record.id)">
+              <a-link @click="EditModel(record.id)">
                 {{ $t(`admin.menu.columns.edit`) }}
               </a-link>
-              <a-link :status="'danger'" @click="DeleteBusiness(record.id)">
+              <a-link :status="'danger'" @click="DeleteModel(record.id)">
                 {{ $t(`admin.menu.columns.delete`) }}
               </a-link>
             </a-space>
           </template>
         </a-table>
         <a-modal
-          v-model:visible="businessDeleteModal"
+          v-model:visible="modelDeleteModal"
           :title="$t('modal.title.tips')"
           :closable="false"
-          @cancel="cancelDeleteBusiness"
+          :width="360"
+          @cancel="cancelDeleteModel"
           @ok="submitDelete"
         >
           <a-space>
             <icon-exclamation-circle-fill size="24" style="color: #e6a23c" />
-            {{ $t('automation.code-gen.modal.business.delete') }}
+            {{ $t('modal.title.tips.delete') }}
           </a-space>
         </a-modal>
-        <a-drawer
-          v-model:visible="genModelDrawer"
-          :footer="false"
-          :width="1440"
-          :header="false"
-        >
+        <a-space style="margin: 20px 0 20px; float: right">
+          <template #split>
+            <a-divider direction="vertical" />
+          </template>
           <a-button
             type="primary"
-            style="margin: 20px 0 20px"
-            @click="openModel"
+            :disabled="operateBusinessRowStatus()"
+            @click="openPreviewDrawer"
           >
             <template #icon>
-              <icon-plus />
+              <icon-eye />
             </template>
-            {{ $t('automation.code-gen.button.model') }}
+            {{ $t('automation.code-gen.button.preview') }}
           </a-button>
-          <a-alert
-            :type="'warning'"
-            :closable="true"
-            style="margin-bottom: 20px"
+          <a-button
+            type="primary"
+            :disabled="operateBusinessRowStatus()"
+            @click="openGenerate"
           >
-            {{ $t('automation.code-gen.tooltip.model') }}
-          </a-alert>
-          <a-modal
-            v-model:visible="modelDrawer"
-            :width="600"
-            :closable="false"
-            :title="modelDrawerTitle"
-            :on-before-ok="beforeSubmit"
-            @ok="submitNewOrEditModel"
-            @cancel="cancelModel"
+            <template #icon>
+              <icon-import />
+            </template>
+            {{ $t('automation.code-gen.button.write') }}
+          </a-button>
+          <a-button
+            type="primary"
+            :disabled="operateBusinessRowStatus()"
+            @click="fetchDownloadCode"
           >
-            <a-form ref="formRef" :model="modelForm">
-              <a-form-item
-                :label="$t('automation.code-gen.form.name')"
-                :rules="[
-                  {
-                    required: true,
-                    message: $t('automation.code-gen.form.name.help'),
-                  },
-                ]"
-                field="name"
-              >
-                <a-input
-                  v-model="modelForm.name"
-                  :placeholder="$t('automation.code-gen.form.name.placeholder')"
-                />
-              </a-form-item>
-              <a-form-item :label="$t('automation.code-gen.form.comment')">
-                <a-input
-                  v-model="modelForm.comment"
-                  :placeholder="
-                    $t('automation.code-gen.form.comment.placeholder')
-                  "
-                  field="comment"
-                />
-              </a-form-item>
-              <a-form-item
-                :label="$t('automation.code-gen.form.type')"
-                :rules="[
-                  {
-                    required: true,
-                    message: $t('automation.code-gen.form.type.help'),
-                  },
-                ]"
-                field="type"
-              >
-                <a-select
-                  v-model="modelForm.type"
-                  :allow-search="true"
-                  :field-names="SQLATypeFN"
-                  :options="SQLATypeOptions"
-                  :placeholder="$t('automation.code-gen.form.type.placeholder')"
-                  @click="fetchModelType"
-                />
-              </a-form-item>
-              <a-form-item :label="$t('automation.code-gen.form.default')">
-                <a-input
-                  v-model="modelForm.default"
-                  :placeholder="
-                    $t('automation.code-gen.form.default.placeholder')
-                  "
-                  field="default"
-                />
-              </a-form-item>
-              <a-form-item
-                :label="$t('automation.code-gen.form.sort')"
-                :rules="[
-                  {
-                    required: true,
-                    message: $t('automation.code-gen.form.sort.help'),
-                  },
-                ]"
-                field="sort"
-              >
-                <a-input-number
-                  v-model="modelForm.sort"
-                  :placeholder="$t('automation.code-gen.form.sort.placeholder')"
-                />
-              </a-form-item>
-              <a-form-item
-                v-show="
-                  ['NVARCHAR', 'String', 'Unicode', 'VARCHAR'].includes(
-                    modelForm.type
-                  )
-                "
-                :label="$t('automation.code-gen.form.length')"
-                :rules="[
-                  {
-                    required: true,
-                    message: $t('automation.code-gen.form.length.help'),
-                  },
-                ]"
-                field="length"
-              >
-                <a-input-number
-                  v-model="modelForm.length"
-                  :placeholder="
-                    $t('automation.code-gen.form.length.placeholder')
-                  "
-                />
-              </a-form-item>
-              <a-form-item
-                :label="$t('automation.code-gen.form.is_pk')"
-                :tooltip="$t('automation.code-gen.form.is_pk.tooltip')"
-                field="is_pk"
-              >
-                <a-switch v-model="switchPkStatus">
-                  <template #checked>
-                    {{ $t('switch.open') }}
-                  </template>
-                  <template #unchecked>
-                    {{ $t('switch.close') }}
-                  </template>
-                </a-switch>
-              </a-form-item>
-              <a-form-item
-                :label="$t('automation.code-gen.form.is_nullable')"
-                field="is_nullable"
-              >
-                <a-switch v-model="switchNullableStatus">
-                  <template #checked>
-                    {{ $t('switch.open') }}
-                  </template>
-                  <template #unchecked>
-                    {{ $t('switch.close') }}
-                  </template>
-                </a-switch>
-              </a-form-item>
-              <a-form-item
-                :label="$t('automation.code-gen.form.gen_business_id')"
-                field="gen_business_id"
-                :rules="[
-                  {
-                    required: true,
-                    message: $t(
-                      'automation.code-gen.form.gen_business_id.help'
-                    ),
-                  },
-                ]"
-              >
-                <a-select
-                  v-model="operateBusinessRow"
-                  :placeholder="
-                    $t('automation.code-gen.form.gen_business_id.placeholder')
-                  "
-                  :options="businessList"
-                  :field-names="BusinessFN"
-                  :disabled="true"
-                />
-              </a-form-item>
-            </a-form>
-          </a-modal>
-          <a-table
-            :size="'medium'"
-            :columns="modelColumns"
-            :data="modelList"
-            :loading="loading"
-            row-key="id"
-            :pagination="false"
-          >
-            <template #empty>
-              <a-empty
-                v-if="operateBusinessRow"
-                :description="$t('automation.code-gen.table.model.empty')"
-              />
-              <a-empty v-else />
+            <template #icon>
+              <icon-download />
             </template>
-            <template #index="{ rowIndex }">
-              {{ rowIndex + 1 }}
-            </template>
-            <template #is_pk="{ record }">
-              <a-badge v-if="record.is_pk === 1" :status="'success'" />
-              <a-badge v-else :status="'danger'" />
-            </template>
-            <template #is_nullable="{ record }">
-              <a-badge v-if="record.is_nullable === true" :status="'success'" />
-              <a-badge v-else :status="'danger'" />
-            </template>
-            <template #operate="{ record }">
-              <a-space>
-                <a-link @click="EditModel(record.id)">
-                  {{ $t(`admin.menu.columns.edit`) }}
-                </a-link>
-                <a-link :status="'danger'" @click="DeleteModel(record.id)">
-                  {{ $t(`admin.menu.columns.delete`) }}
-                </a-link>
-              </a-space>
-            </template>
-          </a-table>
-          <a-modal
-            v-model:visible="modelDeleteModal"
-            :title="$t('modal.title.tips')"
-            :closable="false"
-            :width="360"
-            @cancel="cancelDeleteModel"
-            @ok="submitDelete"
-          >
-            <a-space>
-              <icon-exclamation-circle-fill size="24" style="color: #e6a23c" />
-              {{ $t('modal.title.tips.delete') }}
-            </a-space>
-          </a-modal>
-          <a-space style="margin: 20px 0 20px; float: right">
-            <template #split>
-              <a-divider direction="vertical" />
-            </template>
-            <a-button
-              type="primary"
-              :disabled="operateBusinessRowStatus()"
-              @click="openPreviewDrawer"
-            >
-              <template #icon>
-                <icon-eye />
-              </template>
-              {{ $t('automation.code-gen.button.preview') }}
-            </a-button>
-            <a-button
-              type="primary"
-              :disabled="operateBusinessRowStatus()"
-              @click="openGenerate"
-            >
-              <template #icon>
-                <icon-import />
-              </template>
-              {{ $t('automation.code-gen.button.write') }}
-            </a-button>
-            <a-button
-              type="primary"
-              :disabled="operateBusinessRowStatus()"
-              @click="fetchDownloadCode"
-            >
-              <template #icon>
-                <icon-download />
-              </template>
-              {{ $t('automation.code-gen.button.download') }}
-            </a-button>
-          </a-space>
-        </a-drawer>
-        <a-drawer
-          v-model:visible="previewDrawer"
-          :footer="false"
-          :width="1024"
-          :header="false"
+            {{ $t('automation.code-gen.button.download') }}
+          </a-button>
+        </a-space>
+      </a-drawer>
+      <a-drawer
+        v-model:visible="previewDrawer"
+        :footer="false"
+        :width="1024"
+        :header="false"
+      >
+        <a-tabs
+          v-model:active-key="previewCodeTab"
+          :animation="true"
+          :justify="true"
         >
-          <a-tabs
-            v-model:active-key="previewCodeTab"
-            :animation="true"
-            :justify="true"
+          <a-tooltip
+            :mini="true"
+            :position="'left'"
+            :content="$t('automation.code-gen.tooltip.code.copy')"
           >
-            <a-tooltip
-              :mini="true"
-              :position="'left'"
-              :content="$t('automation.code-gen.tooltip.code.copy')"
-            >
-              <a-button class="copy-button" @click="copyCode">
-                <template #icon><icon-copy /></template>
-              </a-button>
-            </a-tooltip>
-            <a-tab-pane key="api" title="api.py">
-              <Codemirror v-model:value="apiCode" :options="cmOptions" />
-            </a-tab-pane>
-            <a-tab-pane key="crud" title="crud.py">
-              <Codemirror v-model:value="crudCode" :options="cmOptions" />
-            </a-tab-pane>
-            <a-tab-pane key="model" title="model.py">
-              <Codemirror v-model:value="modelCode" :options="cmOptions" />
-            </a-tab-pane>
-            <a-tab-pane key="schema" title="schema.py">
-              <Codemirror v-model:value="schemaCode" :options="cmOptions" />
-            </a-tab-pane>
-            <a-tab-pane key="service" title="service.py">
-              <Codemirror v-model:value="serviceCode" :options="cmOptions" />
-            </a-tab-pane>
-          </a-tabs>
-        </a-drawer>
-        <a-modal
-          v-model:visible="openGenerateModal"
-          :title="$t('automation.code-gen.modal.generate')"
-          :ok-text="$t('automation.code-gen.modal.generate.okText')"
-          @cancel="cancelGenerate"
-          @ok="fetchGenerateCode"
-          @before-open="fetchGenerateCodePath"
-        >
-          <a-space>
-            <icon-exclamation-circle-fill size="24" style="color: #e6a23c" />
-            {{ $t('automation.code-gen.modal.generate.warning') }}
-          </a-space>
-          <a-list :hoverable="true" :size="'small'" style="margin-top: 16px">
-            <a-list-item
-              v-for="(path, index) of generateCodePath.values()"
-              :key="index"
-              class="genCodePath"
-            >
-              {{ path }}
-            </a-list-item>
-          </a-list>
-        </a-modal>
-      </a-card>
-    </a-layout>
-  </div>
-  <div class="footer">
+            <a-button class="copy-button" @click="copyCode">
+              <template #icon><icon-copy /></template>
+            </a-button>
+          </a-tooltip>
+          <a-tab-pane key="api" title="api.py">
+            <Codemirror v-model:value="apiCode" :options="cmOptions" />
+          </a-tab-pane>
+          <a-tab-pane key="crud" title="crud.py">
+            <Codemirror v-model:value="crudCode" :options="cmOptions" />
+          </a-tab-pane>
+          <a-tab-pane key="model" title="model.py">
+            <Codemirror v-model:value="modelCode" :options="cmOptions" />
+          </a-tab-pane>
+          <a-tab-pane key="schema" title="schema.py">
+            <Codemirror v-model:value="schemaCode" :options="cmOptions" />
+          </a-tab-pane>
+          <a-tab-pane key="service" title="service.py">
+            <Codemirror v-model:value="serviceCode" :options="cmOptions" />
+          </a-tab-pane>
+        </a-tabs>
+      </a-drawer>
+      <a-modal
+        v-model:visible="openGenerateModal"
+        :title="$t('automation.code-gen.modal.generate')"
+        :ok-text="$t('automation.code-gen.modal.generate.okText')"
+        @cancel="cancelGenerate"
+        @ok="fetchGenerateCode"
+        @before-open="fetchGenerateCodePath"
+      >
+        <a-space>
+          <icon-exclamation-circle-fill size="24" style="color: #e6a23c" />
+          {{ $t('automation.code-gen.modal.generate.warning') }}
+        </a-space>
+        <a-list :hoverable="true" :size="'small'" style="margin-top: 16px">
+          <a-list-item
+            v-for="(path, index) of generateCodePath.values()"
+            :key="index"
+            class="genCodePath"
+          >
+            {{ path }}
+          </a-list-item>
+        </a-list>
+      </a-modal>
+    </a-card>
     <Footer />
-  </div>
+  </a-layout>
 </template>
 
 <script setup lang="ts">

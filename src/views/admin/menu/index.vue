@@ -1,323 +1,319 @@
 <template>
-  <div class="container">
-    <a-layout style="padding: 0 18px">
-      <Breadcrumb />
-      <a-card :title="$t('menu.admin.sysMenu')" class="general-card">
-        <a-row>
-          <a-col :span="12">
-            <a-form
-              :auto-label-width="true"
-              :label-col-props="{ span: 6 }"
-              :model="formModel"
-              label-align="right"
-            >
-              <a-row>
-                <a-col :span="12">
-                  <a-form-item
-                    :label="$t('admin.menu.form.title')"
-                    field="name"
-                  >
-                    <a-input
-                      v-model="formModel.title"
-                      :placeholder="$t('admin.menu.form.title.placeholder')"
-                    />
-                  </a-form-item>
-                </a-col>
-                <a-col :span="12">
-                  <a-form-item
-                    :label="$t('admin.menu.form.status')"
-                    field="status"
-                  >
-                    <a-select
-                      v-model="formModel.status"
-                      :options="statusOptions"
-                      :placeholder="$t('admin.menu.form.selectDefault')"
-                      allow-clear
-                      @clear="resetStatus"
-                    />
-                  </a-form-item>
-                </a-col>
-              </a-row>
-            </a-form>
-          </a-col>
-          <a-divider direction="vertical" style="height: 30px" />
-          <a-col :span="8">
-            <a-space :size="'medium'" direction="horizontal">
-              <a-button type="primary" @click="search">
-                <template #icon>
-                  <icon-search />
-                </template>
-                {{ $t('admin.menu.form.search') }}
-              </a-button>
-              <a-button @click="resetSelect">
-                <template #icon>
-                  <icon-refresh />
-                </template>
-                {{ $t('admin.menu.form.reset') }}
-              </a-button>
-            </a-space>
-          </a-col>
-        </a-row>
-        <a-divider />
-        <a-space :size="'medium'">
-          <a-button type="primary" @click="NewMenu()">
-            <template #icon>
-              <icon-plus />
-            </template>
-            {{ $t('admin.menu.button.create') }}
-          </a-button>
-          <a-button @click="expand">
-            {{ $t('admin.menu.button.collapse') }}
-          </a-button>
-        </a-space>
-        <div class="content">
-          <a-table
-            ref="tableRef"
-            :bordered="false"
-            :columns="columns"
-            :data="renderData"
-            :loading="loading"
-            :pagination="false"
-            :size="'medium'"
-            row-key="id"
+  <a-layout class="flex-layout">
+    <Breadcrumb />
+    <a-card :title="$t('menu.admin.sysMenu')" class="general-card">
+      <a-row>
+        <a-col :span="12">
+          <a-form
+            :auto-label-width="true"
+            :label-col-props="{ span: 6 }"
+            :model="formModel"
+            label-align="right"
           >
-            <template #menu_type="{ record }">
-              <a-tag v-if="record.menu_type === 0" :color="`orange`" bordered>
-                {{ $t(`admin.menu.columns.type.${record.menu_type}`) }}
-              </a-tag>
-              <a-tag
-                v-else-if="record.menu_type === 1"
-                :color="`purple`"
-                bordered
-              >
-                {{ $t(`admin.menu.columns.type.${record.menu_type}`) }}
-              </a-tag>
-              <a-tag v-else :color="`blue`" bordered>
-                {{ $t(`admin.menu.columns.type.${record.menu_type}`) }}
-              </a-tag>
-            </template>
-            <template #icon="{ record }">
-              <component :is="record.icon" :size="20"></component>
-            </template>
-            <template #show="{ record }">
-              <a-badge v-if="record.show === 1" :status="'success'" />
-              <a-badge v-else :status="'danger'" />
-            </template>
-            <template #status="{ record }">
-              <a-tag v-if="record.status === 1" :color="`green`" bordered>
-                {{ $t(`admin.menu.form.status.${record.status}`) }}
-              </a-tag>
-              <a-tag v-else :color="`red`" bordered>
-                {{ $t(`admin.menu.form.status.${record.status}`) }}
-              </a-tag>
-            </template>
-            <template #created_time="{record}">
-              {{ tableDateFormat(record.created_time) }}
-            </template>
-            <template #operate="{ record }">
-              <a-space>
-                <a-tooltip :content="$t(`admin.menu.columns.new`)">
-                  <a-link @click="NewMenu(record.id)">
-                    <icon-plus style="font-size:16"/>
-                  </a-link>
-                </a-tooltip>
-                <a-tooltip :content="$t(`admin.menu.columns.edit`)">
-                  <a-link @click="EditMenu(record.id)">
-                    <icon-edit style="font-size:16"/>
-                  </a-link>
-                </a-tooltip>
-                <a-tooltip :content="$t(`admin.menu.columns.delete`)">
-                  <a-link :status="'danger'" @click="DeleteMenu(record.id)">
-                    <icon-delete style="font-size:16"/>
-                  </a-link>
-                </a-tooltip>
-              </a-space>
-            </template>
-          </a-table>
-        </div>
-      </a-card>
-    </a-layout>
-  </div>
-  <div class="content-modal">
-    <a-modal
-      :closable="false"
-      :on-before-ok="beforeSubmit"
-      :title="drawerTitle"
-      :visible="openNewOrEdit"
-      :width="580"
-      @cancel="cancelReq"
-      @ok="submitNewOrEdit"
-    >
-      <a-form ref="formRef" :model="form">
-        <a-form-item :label="$t('admin.menu.columns.type')" field="menu_type">
-          <a-radio-group v-model="menuType">
-            <a-radio :value="0">
-              {{ $t('admin.menu.columns.type.0') }}
-            </a-radio>
-            <a-radio :default-checked="true" :value="1">
-              {{ $t('admin.menu.columns.type.1') }}
-            </a-radio>
-            <a-radio :value="2">
-              {{ $t('admin.menu.columns.type.2') }}
-            </a-radio>
-          </a-radio-group>
-        </a-form-item>
-        <a-form-item
-          :label="$t('admin.menu.columns.parent_name')"
-          field="parent_id"
-        >
-          <a-tree-select
-            v-model="form.parent_id"
-            :allow-clear="true"
-            :allow-search="true"
-            :data="treeSelectData"
-            :field-names="selectTreeFieldNames"
-            :loading="loading"
-            :placeholder="$t('admin.menu.form.parent_id.placeholder')"
-          ></a-tree-select>
-        </a-form-item>
-        <a-form-item
-          :feedback="true"
-          :label="$t('admin.menu.columns.title')"
-          :rules="[
-            { required: true, message: $t('admin.menu.form.title.help') },
-          ]"
-          field="title"
-        >
-          <a-input
-            v-model="form.title"
-            :placeholder="$t('admin.menu.form.title.placeholder')"
-          ></a-input>
-        </a-form-item>
-        <a-form-item
-          v-if="menuType === 0 || menuType === 1"
-          :feedback="true"
-          :label="$t('admin.menu.columns.name')"
-          :rules="[
-            { required: true, message: $t('admin.menu.form.name.placeholder') },
-          ]"
-          :tooltip="$t('admin.menu.form.name.help')"
-          field="name"
-        >
-          <a-input
-            v-model="form.name"
-            :placeholder="$t('admin.menu.form.path.name')"
-          ></a-input>
-        </a-form-item>
-        <a-form-item
-          v-if="menuType === 0 || menuType === 1"
-          :label="$t('admin.menu.columns.icon')"
-          field="icon"
-          prop="menuIcon"
-        >
-          <IconPicker v-model:icon-value="form.icon"></IconPicker>
-        </a-form-item>
-        <a-form-item
-          v-if="menuType === 0 || menuType === 1"
-          :label="$t('admin.menu.columns.path')"
-          :tooltip="$t('admin.menu.form.path.help')"
-          field="path"
-        >
-          <a-input
-            v-model="form.path"
-            :placeholder="$t('admin.menu.form.path.placeholder')"
-          ></a-input>
-        </a-form-item>
-        <a-form-item
-          v-if="menuType === 1"
-          :label="$t('admin.menu.columns.component')"
-          :tooltip="$t('admin.menu.form.component.help')"
-          field="component"
-        >
-          <a-input
-            v-model="form.component"
-            :placeholder="$t('admin.menu.form.component.placeholder')"
-          ></a-input>
-        </a-form-item>
-        <a-form-item
-          v-if="menuType === 1 || menuType === 2"
-          :label="$t('admin.menu.columns.perms')"
-          :tooltip="$t('admin.menu.form.perms.help')"
-          field="perms"
-        >
-          <a-input
-            v-model="form.perms"
-            :placeholder="$t('admin.menu.form.perms.placeholder')"
-          ></a-input>
-        </a-form-item>
-        <a-form-item :label="$t('admin.menu.columns.remark')" field="remark">
-          <a-textarea
-            v-model="form.remark"
-            :placeholder="$t('admin.menu.form.remark.placeholder')"
-          ></a-textarea>
-        </a-form-item>
-        <a-form-item
-          v-if="menuType === 1"
-          :label="$t('admin.menu.columns.cache')"
-          :required="true"
-          field="cache"
-        >
-          <a-switch
-            v-model="switchCache"
-            :checked-text="$t('switch.open')"
-            :unchecked-text="$t('switch.close')"
-          />
-        </a-form-item>
-        <a-form-item
-          v-if="menuType === 0 || menuType === 1"
-          :label="$t('admin.menu.columns.show')"
-          :required="true"
-          field="show"
-        >
-          <a-switch
-            v-model="switchShow"
-            :checked-text="$t('switch.open')"
-            :unchecked-text="$t('switch.close')"
-          />
-        </a-form-item>
-        <a-form-item
-          :label="$t('admin.menu.columns.status')"
-          :required="true"
-          field="status"
-        >
-          <a-switch
-            v-model="switchStatus"
-            :checked-text="$t('switch.open')"
-            :unchecked-text="$t('switch.close')"
-          />
-        </a-form-item>
-        <a-form-item
-          :label="$t('admin.menu.columns.sort')"
-          :required="true"
-          field="sort"
-        >
-          <a-input-number
-            v-model="form.sort"
-            :default-value="0"
-            :mode="'button'"
-            :placeholder="$t('admin.menu.columns.sort')"
-            style="width: 35%"
-          />
-        </a-form-item>
-      </a-form>
-    </a-modal>
-    <a-modal
-      :closable="false"
-      :title="`${$t('modal.title.tips')}`"
-      :visible="openDelete"
-      :width="360"
-      @cancel="cancelReq"
-      @ok="submitDelete"
-    >
-      <a-space>
-        <icon-exclamation-circle-fill size="24" style="color: #e6a23c" />
-        {{ $t('modal.title.tips.delete') }}
+            <a-row>
+              <a-col :span="12">
+                <a-form-item
+                  :label="$t('admin.menu.form.title')"
+                  field="name"
+                >
+                  <a-input
+                    v-model="formModel.title"
+                    :placeholder="$t('admin.menu.form.title.placeholder')"
+                  />
+                </a-form-item>
+              </a-col>
+              <a-col :span="12">
+                <a-form-item
+                  :label="$t('admin.menu.form.status')"
+                  field="status"
+                >
+                  <a-select
+                    v-model="formModel.status"
+                    :options="statusOptions"
+                    :placeholder="$t('admin.menu.form.selectDefault')"
+                    allow-clear
+                    @clear="resetStatus"
+                  />
+                </a-form-item>
+              </a-col>
+            </a-row>
+          </a-form>
+        </a-col>
+        <a-divider direction="vertical" style="height: 30px" />
+        <a-col :span="8">
+          <a-space :size="'medium'" direction="horizontal">
+            <a-button type="primary" @click="search">
+              <template #icon>
+                <icon-search />
+              </template>
+              {{ $t('admin.menu.form.search') }}
+            </a-button>
+            <a-button @click="resetSelect">
+              <template #icon>
+                <icon-refresh />
+              </template>
+              {{ $t('admin.menu.form.reset') }}
+            </a-button>
+          </a-space>
+        </a-col>
+      </a-row>
+      <a-divider />
+      <a-space :size="'medium'">
+        <a-button type="primary" @click="NewMenu()">
+          <template #icon>
+            <icon-plus />
+          </template>
+          {{ $t('admin.menu.button.create') }}
+        </a-button>
+        <a-button @click="expand">
+          {{ $t('admin.menu.button.collapse') }}
+        </a-button>
       </a-space>
-    </a-modal>
-  </div>
-  <div class="footer">
+      <div class="content">
+        <a-table
+          ref="tableRef"
+          :bordered="false"
+          :columns="columns"
+          :data="renderData"
+          :loading="loading"
+          :pagination="false"
+          :size="'medium'"
+          row-key="id"
+        >
+          <template #menu_type="{ record }">
+            <a-tag v-if="record.menu_type === 0" :color="`orange`" bordered>
+              {{ $t(`admin.menu.columns.type.${record.menu_type}`) }}
+            </a-tag>
+            <a-tag
+              v-else-if="record.menu_type === 1"
+              :color="`purple`"
+              bordered
+            >
+              {{ $t(`admin.menu.columns.type.${record.menu_type}`) }}
+            </a-tag>
+            <a-tag v-else :color="`blue`" bordered>
+              {{ $t(`admin.menu.columns.type.${record.menu_type}`) }}
+            </a-tag>
+          </template>
+          <template #icon="{ record }">
+            <component :is="record.icon" :size="20"></component>
+          </template>
+          <template #show="{ record }">
+            <a-badge v-if="record.show === 1" :status="'success'" />
+            <a-badge v-else :status="'danger'" />
+          </template>
+          <template #status="{ record }">
+            <a-tag v-if="record.status === 1" :color="`green`" bordered>
+              {{ $t(`admin.menu.form.status.${record.status}`) }}
+            </a-tag>
+            <a-tag v-else :color="`red`" bordered>
+              {{ $t(`admin.menu.form.status.${record.status}`) }}
+            </a-tag>
+          </template>
+          <template #created_time="{record}">
+            {{ tableDateFormat(record.created_time) }}
+          </template>
+          <template #operate="{ record }">
+            <a-space>
+              <a-tooltip :content="$t(`admin.menu.columns.new`)">
+                <a-link @click="NewMenu(record.id)">
+                  <icon-plus style="font-size:16"/>
+                </a-link>
+              </a-tooltip>
+              <a-tooltip :content="$t(`admin.menu.columns.edit`)">
+                <a-link @click="EditMenu(record.id)">
+                  <icon-edit style="font-size:16"/>
+                </a-link>
+              </a-tooltip>
+              <a-tooltip :content="$t(`admin.menu.columns.delete`)">
+                <a-link :status="'danger'" @click="DeleteMenu(record.id)">
+                  <icon-delete style="font-size:16"/>
+                </a-link>
+              </a-tooltip>
+            </a-space>
+          </template>
+        </a-table>
+      </div>
+      <div class="content-modal">
+        <a-modal
+          :closable="false"
+          :on-before-ok="beforeSubmit"
+          :title="drawerTitle"
+          :visible="openNewOrEdit"
+          :width="580"
+          @cancel="cancelReq"
+          @ok="submitNewOrEdit"
+        >
+          <a-form ref="formRef" :model="form">
+            <a-form-item :label="$t('admin.menu.columns.type')" field="menu_type">
+              <a-radio-group v-model="menuType">
+                <a-radio :value="0">
+                  {{ $t('admin.menu.columns.type.0') }}
+                </a-radio>
+                <a-radio :default-checked="true" :value="1">
+                  {{ $t('admin.menu.columns.type.1') }}
+                </a-radio>
+                <a-radio :value="2">
+                  {{ $t('admin.menu.columns.type.2') }}
+                </a-radio>
+              </a-radio-group>
+            </a-form-item>
+            <a-form-item
+              :label="$t('admin.menu.columns.parent_name')"
+              field="parent_id"
+            >
+              <a-tree-select
+                v-model="form.parent_id"
+                :allow-clear="true"
+                :allow-search="true"
+                :data="treeSelectData"
+                :field-names="selectTreeFieldNames"
+                :loading="loading"
+                :placeholder="$t('admin.menu.form.parent_id.placeholder')"
+              ></a-tree-select>
+            </a-form-item>
+            <a-form-item
+              :feedback="true"
+              :label="$t('admin.menu.columns.title')"
+              :rules="[
+                { required: true, message: $t('admin.menu.form.title.help') },
+              ]"
+              field="title"
+            >
+              <a-input
+                v-model="form.title"
+                :placeholder="$t('admin.menu.form.title.placeholder')"
+              ></a-input>
+            </a-form-item>
+            <a-form-item
+              v-if="menuType === 0 || menuType === 1"
+              :feedback="true"
+              :label="$t('admin.menu.columns.name')"
+              :rules="[
+                { required: true, message: $t('admin.menu.form.name.placeholder') },
+              ]"
+              :tooltip="$t('admin.menu.form.name.help')"
+              field="name"
+            >
+              <a-input
+                v-model="form.name"
+                :placeholder="$t('admin.menu.form.path.name')"
+              ></a-input>
+            </a-form-item>
+            <a-form-item
+              v-if="menuType === 0 || menuType === 1"
+              :label="$t('admin.menu.columns.icon')"
+              field="icon"
+              prop="menuIcon"
+            >
+              <IconPicker v-model:icon-value="form.icon"></IconPicker>
+            </a-form-item>
+            <a-form-item
+              v-if="menuType === 0 || menuType === 1"
+              :label="$t('admin.menu.columns.path')"
+              :tooltip="$t('admin.menu.form.path.help')"
+              field="path"
+            >
+              <a-input
+                v-model="form.path"
+                :placeholder="$t('admin.menu.form.path.placeholder')"
+              ></a-input>
+            </a-form-item>
+            <a-form-item
+              v-if="menuType === 1"
+              :label="$t('admin.menu.columns.component')"
+              :tooltip="$t('admin.menu.form.component.help')"
+              field="component"
+            >
+              <a-input
+                v-model="form.component"
+                :placeholder="$t('admin.menu.form.component.placeholder')"
+              ></a-input>
+            </a-form-item>
+            <a-form-item
+              v-if="menuType === 1 || menuType === 2"
+              :label="$t('admin.menu.columns.perms')"
+              :tooltip="$t('admin.menu.form.perms.help')"
+              field="perms"
+            >
+              <a-input
+                v-model="form.perms"
+                :placeholder="$t('admin.menu.form.perms.placeholder')"
+              ></a-input>
+            </a-form-item>
+            <a-form-item :label="$t('admin.menu.columns.remark')" field="remark">
+              <a-textarea
+                v-model="form.remark"
+                :placeholder="$t('admin.menu.form.remark.placeholder')"
+              ></a-textarea>
+            </a-form-item>
+            <a-form-item
+              v-if="menuType === 1"
+              :label="$t('admin.menu.columns.cache')"
+              :required="true"
+              field="cache"
+            >
+              <a-switch
+                v-model="switchCache"
+                :checked-text="$t('switch.open')"
+                :unchecked-text="$t('switch.close')"
+              />
+            </a-form-item>
+            <a-form-item
+              v-if="menuType === 0 || menuType === 1"
+              :label="$t('admin.menu.columns.show')"
+              :required="true"
+              field="show"
+            >
+              <a-switch
+                v-model="switchShow"
+                :checked-text="$t('switch.open')"
+                :unchecked-text="$t('switch.close')"
+              />
+            </a-form-item>
+            <a-form-item
+              :label="$t('admin.menu.columns.status')"
+              :required="true"
+              field="status"
+            >
+              <a-switch
+                v-model="switchStatus"
+                :checked-text="$t('switch.open')"
+                :unchecked-text="$t('switch.close')"
+              />
+            </a-form-item>
+            <a-form-item
+              :label="$t('admin.menu.columns.sort')"
+              :required="true"
+              field="sort"
+            >
+              <a-input-number
+                v-model="form.sort"
+                :default-value="0"
+                :mode="'button'"
+                :placeholder="$t('admin.menu.columns.sort')"
+                style="width: 35%"
+              />
+            </a-form-item>
+          </a-form>
+        </a-modal>
+        <a-modal
+          :closable="false"
+          :title="`${$t('modal.title.tips')}`"
+          :visible="openDelete"
+          :width="360"
+          @cancel="cancelReq"
+          @ok="submitDelete"
+        >
+          <a-space>
+            <icon-exclamation-circle-fill size="24" style="color: #e6a23c" />
+            {{ $t('modal.title.tips.delete') }}
+          </a-space>
+        </a-modal>
+      </div>
+    </a-card>
     <Footer />
-  </div>
+  </a-layout>
 </template>
 
 <script lang="ts" setup>
