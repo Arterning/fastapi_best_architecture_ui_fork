@@ -14,7 +14,7 @@ import '@/api/interceptor';
 const app = createApp(App);
 app.config.warnHandler = () => null;
 
-app.use(ArcoVue, {});.
+app.use(ArcoVue, {});
 app.use(ArcoVueIcon);
 
 app.use(router);
