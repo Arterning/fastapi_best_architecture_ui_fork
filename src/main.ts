@@ -9,6 +9,7 @@ import i18n from './locale';
 import directive from './directive';
 import App from './App.vue';
 import '@/assets/style/global.less';
+import '@arco-themes/vue-hisense-pangea';
 import '@/api/interceptor';
 
 const app = createApp(App);
