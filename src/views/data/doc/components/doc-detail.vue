@@ -1,27 +1,23 @@
 <template>
-  <div class="container">
-      <a-layout style="padding: 0 18px">
-          <Breadcrumb />
-          <a-spin :loading="loading">
-            <a-card v-if="info" class="content-box">
-              <ExcelDetail v-if="info.type==='excel'" 
-              :title="info.title" 
-              :doc_data="info.doc_data" 
-              :file="info.file"/>
-              <GeneralDetail v-else :info="info" />
-            </a-card>
-          </a-spin>
-      </a-layout>
-      <div class="footer">
-        <Footer />
-      </div>
-  </div>
+  <a-layout class="flex-layout">
+    <Breadcrumb />
+    <a-spin :loading="loading">
+      <a-card v-if="info" class="content-box">
+        <ExcelDetail v-if="info.type==='excel'" 
+        :title="info.title" 
+        :doc_data="info.doc_data" 
+        :file="info.file"/>
+        <GeneralDetail v-else :info="info" />
+      </a-card>
+    </a-spin>
+    <Footer />
+  </a-layout>
 </template>
 
 <script lang="ts" setup>
   import { SysDocRes } from '@/api/doc';
   import useLoading from '@/hooks/loading';
-  import { onMounted, ref, watchEffect } from 'vue';
+  import { onMounted, ref } from 'vue';
   import { useRoute } from 'vue-router';
   import { useDocStore } from '@/store';
   import Footer from '@/components/footer/index.vue';
@@ -59,6 +55,6 @@
 
 <style scoped lang="less">
 .content-box{
-  border: none;
+  flex: 1;
 }
 </style>

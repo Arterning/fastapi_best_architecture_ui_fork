@@ -1,5 +1,5 @@
 <template>
-  <a-layout style="padding: 0 18px">
+  <a-layout class="flex-layout">
     <a-card :title="$t('Email')" class="general-card">
       <a-row>
         <a-col :flex="62">
@@ -235,6 +235,7 @@
     import { useI18n } from 'vue-i18n';
     import { computed, reactive, ref } from 'vue';
     import useLoading from '@/hooks/loading';
+    import Footer from '@/components/footer/index.vue';
     import {
       createSysDoc,
       deleteSysDoc,

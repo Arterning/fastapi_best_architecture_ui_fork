@@ -1,5 +1,5 @@
 <template>
-  <a-layout style="padding: 0 18px">
+  <a-layout class="flex-layout">
     <Breadcrumb />
     <a-card
       :title="$t('menu.automation.card.dataImport')"

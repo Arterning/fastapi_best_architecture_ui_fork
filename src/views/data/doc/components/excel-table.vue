@@ -1,5 +1,5 @@
 <template>
-  <a-layout style="padding: 0 18px">
+  <a-layout class="flex-layout">
     <a-card :title="$t('Excel')" class="general-card">
       <a-row>
         <a-col :flex="62">
