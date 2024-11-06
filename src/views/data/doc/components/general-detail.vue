@@ -34,17 +34,21 @@
                 <keep-alive>
                     <a-tooltip content="点击以查看">
                         <a-image
-                            style="cursor:pointer"
+                            height="480"
+                            style="cursor:pointer;"
                             v-if="info.type==='picture'"
                             :src="buildSrcURL(info.file)"
                         />
                     </a-tooltip>
                 </keep-alive>
                 <keep-alive>
-                    <video v-if="info.type==='media'" :src="buildSrcURL(info.file)"  style="width:75vw;" controls></video>
+                    <div class="media-box" v-if="info.type==='media'">
+                        <icon-music class="media-icon" />
+                        <video :src="buildSrcURL(info.file)" style="width:100%;z-index:1" controls></video>
+                    </div>
                 </keep-alive>
                 <keep-alive>
-                    <iframe v-if="info.type==='pdf'" :src="buildSrcURL(info.file)" style="width:75vw;height:65vh" frameborder="0"></iframe>
+                    <iframe v-if="info.type==='pdf'" :src="buildSrcURL(info.file)" style="width:100%;height:75vh;" frameborder="0"></iframe>
                 </keep-alive>
             </a-descriptions-item>
             <a-descriptions-item label="内容" >
@@ -82,6 +86,20 @@
 
 .flex{
     display:flex;
+}
+
+.media-box{
+    background:#f3f3f3;
+    position:relative;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    .media-icon{
+        position:absolute;
+        font-size:3rem;
+        color:#555;
+    }
 }
 
 .email-title{
