@@ -189,8 +189,9 @@
           :title="`${$t('内容')}`"
           :visible="openView"
           fullscreen
-          @cancel="cancelReq"
+          hideCancel
           @ok="cancelReq"
+          okText="关闭"
         >
           <ExcelDetail :title="form.title" :doc_data="form.doc_data" :file="form.file"/>
         </a-modal>

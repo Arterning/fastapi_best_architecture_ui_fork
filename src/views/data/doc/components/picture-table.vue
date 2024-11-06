@@ -181,8 +181,9 @@
           :title="`${$t('内容')}`"
           :visible="openView"
           fullscreen
-          @cancel="cancelReq"
+          hideCancel
           @ok="cancelReq"
+          okText="关闭"
         >
           <GeneralDetail :info="form"/>
         </a-modal>

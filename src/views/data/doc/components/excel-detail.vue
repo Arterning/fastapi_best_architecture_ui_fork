@@ -1,6 +1,6 @@
 <template>
     <a-space direction="vertical" style="max-width:100vw">
-        <a-descriptions :column="1">
+        <a-descriptions :column="1" >
             <a-descriptions-item label="标题">
                 {{ title }}
             </a-descriptions-item>

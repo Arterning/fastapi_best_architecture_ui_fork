@@ -1,7 +1,7 @@
 <template>
     <a-space direction="vertical">
         <a-descriptions :column="1">
-            <a-descriptions-item label="文件标题">
+            <a-descriptions-item label="标题">
                 {{ info.title }}
             </a-descriptions-item>
             <a-descriptions-item label="邮件头" v-if="info.type==='email'" >
@@ -35,6 +35,8 @@
                     <a-tooltip content="点击以查看">
                         <a-image
                             height="480"
+                            width="100%"
+                            fit="contain"
                             style="cursor:pointer;"
                             v-if="info.type==='picture'"
                             :src="buildSrcURL(info.file)"
@@ -94,6 +96,7 @@
     display:flex;
     justify-content:center;
     align-items:center;
+    width: 70vw;
 
     .media-icon{
         position:absolute;
@@ -115,7 +118,7 @@
 }
 
 .email-person{
-    color:  rgb(var(--primary-6));
+    color: rgb(var(--primary-6));
 }
 
 .mb-1{

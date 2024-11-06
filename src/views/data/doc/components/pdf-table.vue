@@ -181,8 +181,9 @@
           :title="`${$t('内容')}`"
           :visible="openView"
           fullscreen
-          @cancel="cancelReq"
+          hideCancel
           @ok="cancelReq"
+          okText="关闭"
         >
           <GeneralDetail :info="form"/>
         </a-modal>
@@ -405,6 +406,8 @@
       setLoading(false);
     }
   };
+
+
 
   // 事件: 分页
   const onPageChange = async (current: number) => {

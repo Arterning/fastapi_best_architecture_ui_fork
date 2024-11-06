@@ -11,7 +11,7 @@
     >
       <a-tooltip v-if="itemData.appendix" :content="itemData.appendix">
         <div class="tag-link ellipsis">
-          {{ $t(itemData.title)}}-{{itemData.appendix}}
+          {{itemData.appendix}}
         </div>
       </a-tooltip>
       <div v-else class="tag-link">

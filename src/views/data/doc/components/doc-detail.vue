@@ -55,6 +55,6 @@
 
 <style scoped lang="less">
 .content-box{
-  flex: 1;
+  border:none;
 }
 </style>
