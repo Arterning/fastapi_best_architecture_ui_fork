@@ -1,15 +1,17 @@
 <template>
   <a-layout class="flex-layout">
     <Breadcrumb />
-    <a-spin :loading="loading">
-      <a-card v-if="info" class="content-box">
-        <ExcelDetail v-if="info.type==='excel'" 
-        :title="info.title" 
-        :doc_data="info.doc_data" 
-        :file="info.file"/>
-        <GeneralDetail v-else :info="info" />
-      </a-card>
-    </a-spin>
+    <div class="general-card">
+      <a-spin :loading="loading">
+        <a-card v-if="info" class="content-box">
+          <ExcelDetail v-if="info.type==='excel'" 
+          :title="info.title" 
+          :doc_data="info.doc_data" 
+          :file="info.file"/>
+          <GeneralDetail v-else :info="info" />
+        </a-card>
+      </a-spin>
+    </div>
     <Footer />
   </a-layout>
 </template>
