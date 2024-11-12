@@ -57,6 +57,7 @@
 
 <style scoped lang="less">
 .content-box{
-  border:none;
+  border:none;    
+  width: 100%;
 }
 </style>

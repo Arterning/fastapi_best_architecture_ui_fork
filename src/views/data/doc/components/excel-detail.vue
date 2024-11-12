@@ -12,7 +12,7 @@
             </a-descriptions-item>
         </a-descriptions>
     </a-space>
-    <a-row :gutter="24" style="margin: 10px 0;max-width:50vw">
+    <a-row :gutter="24" style="margin: 10px 0;">
         <a-col :span="12"><a-input v-model="term" @press-enter="search" placeholder="搜索"/></a-col>
         <a-col :span="6">
             <a-button type="primary" @click="search">
@@ -23,13 +23,16 @@
             </a-button>
         </a-col>
     </a-row>
-    <a-table 
+    <div style="width:80vw">
+        <a-table 
         :columns="columns" 
         :data="filteredData" 
         column-resizable 
         :bordered="{cell:true}"
         :ellipsis="true"
         :scroll="scrollPercent" />
+    </div>
+
 </template>
 
 <script lang="ts" setup>

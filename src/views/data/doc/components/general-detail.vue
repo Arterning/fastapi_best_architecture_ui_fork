@@ -37,7 +37,7 @@
                             height="480"
                             width="100%"
                             fit="contain"
-                            style="cursor:pointer;"
+                            class="image"
                             v-if="info.type==='picture'"
                             :src="buildSrcURL(info.file)"
                         />
@@ -46,11 +46,11 @@
                 <keep-alive>
                     <div class="media-box" v-if="info.type==='media'">
                         <icon-music class="media-icon" />
-                        <video :src="buildSrcURL(info.file)" style="width:100%;z-index:1" controls></video>
+                        <video :src="buildSrcURL(info.file)" class="video" controls></video>
                     </div>
                 </keep-alive>
                 <keep-alive>
-                    <iframe v-if="info.type==='pdf'" :src="buildSrcURL(info.file)" style="width:100%;height:75vh;" frameborder="0"></iframe>
+                    <iframe v-if="info.type==='pdf'" :src="buildSrcURL(info.file)" class="pdf" frameborder="0"></iframe>
                 </keep-alive>
             </a-descriptions-item>
             <a-descriptions-item label="内容" >
@@ -80,7 +80,7 @@
 
 <style lang="less" scoped>
 .content-box{
-    display: flex;
+    // display: flex;
     width: 70vw;
     max-height: 65vh;
     overflow: auto;
@@ -127,6 +127,20 @@
 
 .mb-2{
     margin-bottom: 1rem;
+}
+
+.image{
+    cursor:pointer;
+}
+
+.video{
+    width:100%; 
+    z-index:1;
+}
+
+.pdf{
+    width:100%;
+    height:75vh;
 }
 
 ::-webkit-scrollbar {
