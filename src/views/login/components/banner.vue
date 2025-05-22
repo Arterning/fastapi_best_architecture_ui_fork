@@ -5,7 +5,9 @@
         <a-carousel-item v-for="item in carouselItem" :key="item.slogan">
           <div :key="item.slogan" class="carousel-item">
             <div class="carousel-title">{{ item.slogan }}</div>
-            <div class="carousel-sub-title">{{ item.subSlogan }}</div>
+            <div class="carousel-sub-title" style="margin-bottom: 20px">{{
+              item.subSlogan
+            }}</div>
             <img :src="item.image" class="carousel-image" />
           </div>
         </a-carousel-item>
@@ -63,7 +65,7 @@
     }
 
     &-title {
-      color: var(--color-fill-1);
+      color: var(--color-text-3);
       font-weight: 500;
       font-size: 20px;
       line-height: 28px;

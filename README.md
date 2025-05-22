@@ -3,12 +3,8 @@
 Front-end Implementation of
 the [FastAPI Best Architecture](https://github.com/fastapi-practices/fastapi_best_architecture)
 
-Some basic functionality has been implemented, development has been slow, please keep in mind that at the moment it is only intended as a demo of the effect and not for production!
-
-Fortunately, we now have a demo site: [FBA UI](https://fba.xwboy.top/)
-
-> [!NOTE]
-> Use casbin authorization internally instead of role menu authorization
+> [!CAUTION]
+> This is not recommended for production!
 
 ## Run
 
@@ -40,27 +36,25 @@ yarn build
   </tr>
   <tr>
     <td><img src="./docs/images/menu_manage.jpg" alt="menu manage"></td>
-    <td><img src="./docs/images/redis_monitor.jpg" alt="redis monitor"></td>
+    <td><img src="./docs/images/code_generator.jpg" alt="code generator"></td>
   </tr>
   <tr>
+    <td><img src="./docs/images/redis_monitor.jpg" alt="server monitor"></td>
     <td><img src="./docs/images/server_monitor.jpg" alt="server monitor"></td>
   </tr>
 </table>
 
 ## Contributors
 
-<span style="margin: 0 5px;" ><a href="https://github.com/wu-clan" ><img src="https://images.weserv.nl/?url=avatars.githubusercontent.com/u/52145145?v=4&h=60&w=60&fit=cover&mask=circle&maxage=7d" /></a></span>
-<span style="margin: 0 5px;" ><a href="https://github.com/downdawn" ><img src="https://images.weserv.nl/?url=avatars.githubusercontent.com/u/41266749?v=4&h=60&w=60&fit=cover&mask=circle&maxage=7d" /></a></span>
+<a href="https://github.com/fastapi-practices/fastapi_best_architecture_ui/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=fastapi-practices/fastapi_best_architecture_ui"/>
+</a>
 
 ## Special thanks
 
 - [Vue.js](https://cn.vuejs.org/guide/introduction.html)
-- [Arco-design](https://github.com/arco-design)
+- [Arco Desgin](https://github.com/arco-design)
 - ...
-
-## Interactivity
-
-[WeChat / QQ](https://wu-clan.github.io/homepage/)
 
 ## Sponsor us
 

@@ -3,7 +3,7 @@ export default {
   // form
   'admin.user.form.dept': 'Department',
   'admin.user.form.dept.required': 'Department is required',
-  'admin.user.form.dept.placeholder': 'Please select department',
+  'admin.user.form.dept.placeholder': 'Please input department',
   'admin.user.form.username': 'Username',
   'admin.user.form.username.required': 'Username is required',
   'admin.user.form.username.placeholder': 'Please enter username',
@@ -37,7 +37,9 @@ export default {
   'admin.user.columns.updateUserRoles.placeholder':
     "Sure you want to modify the user's role?",
   'admin.user.columns.switch.true': 'Enable',
+  'admin.user.columns.switch.1': 'Enable',
   'admin.user.columns.switch.false': 'Disable',
+  'admin.user.columns.switch.0': 'Disable',
   'admin.user,columns.edit': 'Edit',
   'admin.user.columns.edit.userinfo': 'Update userinfo',
   'admin.user.columns.edit.avatar': 'Update avatar',
@@ -61,7 +63,4 @@ export default {
   'admin.user.columns.add': 'Add User',
   // button
   'admin.user.button.add': 'Add User',
-  // alert
-  'admin.user.alert.superuser':
-    'Superuser are not limited by role permissions and have all permissions by default',
 };

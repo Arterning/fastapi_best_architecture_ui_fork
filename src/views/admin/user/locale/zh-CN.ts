@@ -3,7 +3,7 @@ export default {
   // form
   'admin.user.form.dept': '部门',
   'admin.user.form.dept.required': '部门是必选项',
-  'admin.user.form.dept.placeholder': '请选择部门',
+  'admin.user.form.dept.placeholder': '请输入部门',
   'admin.user.form.username': '用户名',
   'admin.user.form.username.required': '用户名是必填项',
   'admin.user.form.username.placeholder': '请输入用户名',
@@ -35,7 +35,9 @@ export default {
   // columns
   'admin.user.columns.updateUserRoles.placeholder': '确定要修改用户的角色吗？',
   'admin.user.columns.switch.true': '开启',
+  'admin.user.columns.switch.1': '开启',
   'admin.user.columns.switch.false': '关闭',
+  'admin.user.columns.switch.0': '关闭',
   'admin.user,columns.edit': '编辑',
   'admin.user.columns.edit.userinfo': '更新用户信息',
   'admin.user.columns.edit.avatar': '更新头像',
@@ -59,6 +61,4 @@ export default {
   'admin.user.columns.add': '添加用户',
   // button
   'admin.user.button.add': '添加用户',
-  // alert
-  'admin.user.alert.superuser': '管理员不受角色权限限制，默认拥有所有权限',
 };
